@@ -7,7 +7,7 @@
   "targets": {
     ".NETStandard,Version=v2.1": {},
     ".NETStandard,Version=v2.1/": {
-      "ErenshorQoL/1.0.0": {
+      "ErenshorQoL/1.1.0": {
         "dependencies": {
           "0Harmony": "2.9.0.0",
           "Assembly-CSharp": "0.0.0.0",
@@ -71,7 +71,7 @@
     }
   },
   "libraries": {
-    "ErenshorQoL/1.0.0": {
+    "ErenshorQoL/1.1.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

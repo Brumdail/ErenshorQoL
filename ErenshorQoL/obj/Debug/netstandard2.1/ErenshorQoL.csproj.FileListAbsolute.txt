@@ -14,3 +14,4 @@ C:\Users\brumd\source\repos\ErenshorQoL\ErenshorQoL\obj\Debug\netstandard2.1\Ere
 C:\Users\brumd\source\repos\ErenshorQoL\ErenshorQoL\obj\Debug\netstandard2.1\Erenshor.9E40F15E.Up2Date
 C:\Users\brumd\source\repos\ErenshorQoL\ErenshorQoL\obj\Debug\netstandard2.1\ErenshorQoL.dll
 C:\Users\brumd\source\repos\ErenshorQoL\ErenshorQoL\obj\Debug\netstandard2.1\ErenshorQoL.pdb
+C:\Users\brumd\source\repos\ErenshorQoL\ErenshorQoL\bin\Debug\netstandard2.1\UnityEngine.UI.dll
