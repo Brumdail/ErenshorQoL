@@ -1,10 +1,14 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\brumd\\source\\repos\\ErenshorQoL\\",
+  "WorkspaceRootPath": "C:\\Users\\brumd\\Documents\\GitHub\\ErenshorQoL\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{30733A6C-62E1-4E8E-816D-05B5FE7229F5}|ErenshorQoL\\ErenshorQoL.csproj|c:\\users\\brumd\\source\\repos\\erenshorqol\\erenshorqol\\erenshormod.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{30733A6C-62E1-4E8E-816D-05B5FE7229F5}|ErenshorQoL\\ErenshorQoL.csproj|c:\\users\\brumd\\documents\\github\\erenshorqol\\erenshorqol\\erenshormod.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{30733A6C-62E1-4E8E-816D-05B5FE7229F5}|ErenshorQoL\\ErenshorQoL.csproj|solutionrelative:erenshorqol\\erenshormod.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{30733A6C-62E1-4E8E-816D-05B5FE7229F5}|ErenshorQoL\\ErenshorQoL.csproj|c:\\users\\brumd\\documents\\github\\erenshorqol\\erenshorqol\\readme.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{30733A6C-62E1-4E8E-816D-05B5FE7229F5}|ErenshorQoL\\ErenshorQoL.csproj|solutionrelative:erenshorqol\\readme.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,7 +18,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -22,13 +26,26 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "README.md",
+              "DocumentMoniker": "C:\\Users\\brumd\\Documents\\GitHub\\ErenshorQoL\\ErenshorQoL\\README.md",
+              "RelativeDocumentMoniker": "ErenshorQoL\\README.md",
+              "ToolTip": "C:\\Users\\brumd\\Documents\\GitHub\\ErenshorQoL\\ErenshorQoL\\README.md",
+              "RelativeToolTip": "ErenshorQoL\\README.md",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB0AAAAtAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2024-06-09T21:48:52.995Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
               "Title": "ErenshorMod.cs",
-              "DocumentMoniker": "C:\\Users\\brumd\\source\\repos\\ErenshorQoL\\ErenshorQoL\\ErenshorMod.cs",
+              "DocumentMoniker": "C:\\Users\\brumd\\Documents\\GitHub\\ErenshorQoL\\ErenshorQoL\\ErenshorMod.cs",
               "RelativeDocumentMoniker": "ErenshorQoL\\ErenshorMod.cs",
-              "ToolTip": "C:\\Users\\brumd\\source\\repos\\ErenshorQoL\\ErenshorQoL\\ErenshorMod.cs",
+              "ToolTip": "C:\\Users\\brumd\\Documents\\GitHub\\ErenshorQoL\\ErenshorQoL\\ErenshorMod.cs",
               "RelativeToolTip": "ErenshorQoL\\ErenshorMod.cs",
-              "ViewState": "AQIAAPQAAAAAAAAAAAAwwP8AAAAAAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAACABAAB6AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-01T21:39:28.561Z",
               "EditorCaption": ""

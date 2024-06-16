@@ -253,7 +253,14 @@ namespace ErenshorQoL
                         bool helpGM = text == "/help";
                         if (helpGM)
                         {
-                            UpdateSocialLog.LogAdd("GM commands: *most not available in the demo build", "orange");
+                            UpdateSocialLog.LogAdd("QoL Modded commands: ", "lightblue");
+                            UpdateSocialLog.LogAdd("/autoloot - Toggles the feature to automatically Loot All items from the nearest corpse each time a creature dies.", "lightblue");
+                            UpdateSocialLog.LogAdd("/bank - Opens the bank window", "lightblue");
+                            //UpdateSocialLog.LogAdd("/vendor - Sets target NPC to a vendor", "lightblue");
+                            UpdateSocialLog.LogAdd("/auction - Opens the auction hall window", "lightblue");
+                            //UpdateSocialLog.LogAdd("/allscene - Lists all scenes", "lightblue");
+
+                            UpdateSocialLog.LogAdd("\nGM commands: *most not available in the demo build", "orange");
                             UpdateSocialLog.LogAdd("/iamadev - Enable Dev Controls", "orange");
                             UpdateSocialLog.LogAdd("/allitem - List all items", "orange");
                             UpdateSocialLog.LogAdd("/additem 11823624 - Add item (use /allitem to get item codes)", "orange");
@@ -281,25 +288,17 @@ namespace ErenshorQoL
                             UpdateSocialLog.LogAdd("/allgrps - List group data", "orange");
                             UpdateSocialLog.LogAdd("/portsim SimName - Teleport specified SimPlayer to player", "orange");
 
-                            UpdateSocialLog.LogAdd("\nQoL Modded commands: ", "lightblue");
-                            UpdateSocialLog.LogAdd("/bank - Opens the bank window", "lightblue");
-                            //UpdateSocialLog.LogAdd("/vendor - Sets target NPC to a vendor", "lightblue");
-                            UpdateSocialLog.LogAdd("/auction - Opens the auction hall window", "lightblue");
-                            //UpdateSocialLog.LogAdd("/allscene - Lists all scenes", "lightblue");
-
-                            UpdateSocialLog.LogAdd("\nPlayers commands (additional):", "yellow");
-                            UpdateSocialLog.LogAdd("/keyring - List held keys", "yellow");
-                            UpdateSocialLog.LogAdd("/all players || /all pla - List all players in Erenshor", "yellow");
-                            UpdateSocialLog.LogAdd("/shout - Message the entire zone", "yellow");
-                            UpdateSocialLog.LogAdd("/friend - Target SimPlayer is a FRIEND of this character. Their progress will be loosely tied to this character's progress.", "yellow");
-                            UpdateSocialLog.LogAdd("/time 1, /time10, /time25, /time50 - Set TimeScale multiplier", "yellow");
-
                             UpdateSocialLog.LogAdd("\nPlayers commands:", "yellow");
                             UpdateSocialLog.LogAdd("/players - Get a list of players in zone", "yellow");
                             UpdateSocialLog.LogAdd("/time - Get the current game time", "yellow");
                             UpdateSocialLog.LogAdd("/whisper PlayerName Msg - Send a private message", "yellow");
                             UpdateSocialLog.LogAdd("/group - Send a message to your group (wait, attack, guard, etc)", "yellow");
                             UpdateSocialLog.LogAdd("/dance - boogie down.", "yellow");
+                            UpdateSocialLog.LogAdd("/keyring - List held keys", "yellow");
+                            UpdateSocialLog.LogAdd("/all players || /all pla - List all players in Erenshor", "yellow");
+                            UpdateSocialLog.LogAdd("/shout - Message the entire zone", "yellow");
+                            UpdateSocialLog.LogAdd("/friend - Target SimPlayer is a FRIEND of this character. Their progress will be loosely tied to this character's progress.", "yellow");
+                            UpdateSocialLog.LogAdd("/time 1, /time10, /time25, /time50 - Set TimeScale multiplier", "yellow");
                             UpdateSocialLog.LogAdd("Hotkeys:", "yellow");
                             UpdateSocialLog.LogAdd("o - options", "yellow");
                             UpdateSocialLog.LogAdd("i - inventory", "yellow");
