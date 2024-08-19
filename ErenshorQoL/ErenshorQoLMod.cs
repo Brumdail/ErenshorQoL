@@ -451,11 +451,13 @@ namespace ErenshorQoL
         class AutoOnSkill
         {
             /// <summary>
-            /// Attempts to find the latest nearby corpse to loot after each Character.DoDeath call
+            /// Automatically turn on Auto-Attack or Automatically send your pet when you use an offensive skill
             /// </summary>
-            
+
             static void Prefix()
             {
+                bool autoAttackDebug = true;
+
                 if (ErenshorQoLMod.AutoPetToggle.Value == Toggle.On)
                 {
                     if (ErenshorQoLMod.AutoPetOnSkillToggle.Value == Toggle.On)
@@ -463,6 +465,34 @@ namespace ErenshorQoL
                         AutoPet.AutoSendPet();
                     }
                 }
+                if (ErenshorQoLMod.AutoAttackToggle.Value == Toggle.On)
+                {
+                    if (ErenshorQoLMod.AutoAttackOnSkillToggle.Value == Toggle.On)
+                    {
+                        if (autoAttackDebug) {UpdateSocialLog.LogAdd($"Auto-Attack On Skill - GameData Autoattacking is: {GameData.Autoattacking}", "lightblue");}
+
+                        if (GameData.Autoattacking == false)
+                        {
+                            // Find the PlayerCombat component
+                            PlayerCombat playerCombat = GameData.PlayerControl.Myself.GetComponent<PlayerCombat>();
+
+                            if (playerCombat != null)
+                            {
+                                // Use AccessTools reflection to get the private method info
+                                MethodInfo toggleAttackMethod = AccessTools.Method(typeof(PlayerCombat), "ToggleAttack");
+
+                                if (toggleAttackMethod != null)
+                                {
+                                    // Invoke the private method
+                                    toggleAttackMethod.Invoke(playerCombat, null);
+                                }
+                                if (autoAttackDebug) { UpdateSocialLog.LogAdd($"Activeated Auto-Attack On Skill - GameData Autoattacking is: {GameData.Autoattacking}", "orange"); }
+                            }
+                        }
+
+                    }
+                }
+                
             }
         }
 
@@ -486,6 +516,7 @@ namespace ErenshorQoL
                 // GameData.PlayerControl.CurrentTarget.AggressiveTowards
                 if ((petActive) && (hasTarget) && (isAggressive))
                 {
+
                     GameData.PlayerControl.Myself.MyCharmedNPC.CurrentAggroTarget = GameData.PlayerControl.CurrentTarget;
                     
                 }
