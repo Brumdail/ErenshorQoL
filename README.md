@@ -5,10 +5,10 @@ Erenshor Quality of Life Modpack based on BepInEx
 
 ## How it works:
 
-/autoloot - Toggles the feature to automatically Loot All items from the nearest corpse each time a creature dies.
-/bank - Opens the bank window
-/auction - Opens the auction hall window
-/help - Expanded list of commands including additional available player and GM commands
+- `/autoloot` - Toggles the feature to automatically Loot All items from the nearest corpse each time a creature dies.
+- `/bank` - Opens the bank window
+- `/auction` - Opens the auction hall window
+- `/help` - Expanded list of commands including additional available player and GM commands
 
 ## How to Install: 
 
@@ -27,7 +27,7 @@ Adds Prefix commands to TypeText.CheckCommands() to include new commands
 ### GM commands: *most not available in the demo build*
 - `/iamadev` - Enable Dev Controls
 - `/allitem` - List all items
-- `/additem 11823624` - Add item (use /allitem to get item codes)
+- `/additem 11823624` - Add item to inventory (use /allitem to get item codes)
 - `/hpscale 1.0 (multiplier)` - NPC HP scale modifier. You must zone to activate this modifier
 - `/loadset 35 (level 1-35)` - Sets targetted SimPlayer to level and gear for level
 - `/livenpc` - List living NPCs in zone
@@ -52,23 +52,17 @@ Adds Prefix commands to TypeText.CheckCommands() to include new commands
 - `/allgrps` - List group data
 - `/portsim SimName` - Teleport specified SimPlayer to player
 
-### QoL Modded commands:
-- `/bank` - Opens the bank window
-- `/auction` - Opens the auction hall window
-
-### Players commands (additional):
-- `/keyring` - List held keys
-- `/all players` or `/all pla` - List all players in Erenshor
-- `/shout` - Message the entire zone
-- `/friend` - Target SimPlayer is a FRIEND of this character. Their progress will be loosely tied to this character's progress.
-- `/time 1`, `/time10`, `/time25`, `/time50` - Set TimeScale multiplier
-
 ### Players commands:
 - `/players` - Get a list of players in zone
 - `/time` - Get the current game time
 - `/whisper PlayerName Msg` - Send a private message
 - `/group` - Send a message to your group (wait, attack, guard, etc)
 - `/dance` - boogie down.
+- `/keyring` - List held keys
+- `/all players` or `/all pla` - List all players in Erenshor
+- `/shout` - Message the entire zone
+- `/friend` - Target SimPlayer is a FRIEND of this character. Their progress will be loosely tied to this character's progress.
+- `/time 1`, `/time10`, `/time25`, `/time50` - Set TimeScale multiplier
 
 ### Hotkeys:
 - `o` - options

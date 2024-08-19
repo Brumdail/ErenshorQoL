@@ -5,8 +5,9 @@
     <Nullable>enable</Nullable>
     <Title>Erenshor Quality of Life Mods</Title>
     <Authors>Brumdail</Authors>
-	<Version>1.1.0</Version>
+	<Version>1.1.1</Version>
 	<FileVersion>1.1.0.0</FileVersion>
+	<LangVersion>9.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,5 +30,9 @@
       <HintPath>lib\UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="call &quot;.\Post-build.bat&quot;" />
+  </Target>
 
 </Project>

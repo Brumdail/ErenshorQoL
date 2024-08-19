@@ -1,47 +1,171 @@
 ﻿using BepInEx;
 using HarmonyLib;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using BepInEx.Logging;
+using BepInEx.Configuration;
+using JetBrains.Annotations;
+using System.Runtime.CompilerServices;
 
 
 
 namespace ErenshorQoL
 {
-    [BepInPlugin("erenshorqol.ErenshorMod", "Erenshor Quality of Life Modpack", "1.1.0")]
+    [BepInPlugin(ModGUID, ModDescription, ModVersion)]
     [BepInProcess("Erenshor.exe")]
-    public class ErenshorMod : BaseUnityPlugin
+    public class ErenshorQoLMod : BaseUnityPlugin
     {
-        private readonly Harmony harmony = new Harmony("erenshorqol.ErenshorMod");
+        internal const string ModName = "ErenshorQoLMod";
+        internal const string ModVersion = "1.1.1";
+        internal const string ModDescription = "Erenshor Quality of Life Mods";
+        internal const string Author = "Brumdail";
+        private const string ModGUID = Author + "." + ModName;
+        private static string ConfigFileName = ModGUID + ".cfg";
+        private static string ConfigFileFullPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
+        //internal static readonly int windowId = 777001; //will be used later for identifying the mod's window
+        internal static ErenshorQoLMod context = null!;
+
+        private readonly Harmony harmony = new Harmony(ModGUID);
+
+        public static readonly ManualLogSource ErenshorQoLLogger = BepInEx.Logging.Logger.CreateLogSource(ModName);
+        public enum Toggle
+        {
+            Off,
+            On
+        }
+
         void Awake()
         {
-            harmony.PatchAll();
+            context = this; // Set the context to the current instance
+            Utilities.GenerateConfigs(); // Generate initial configuration if necessary
+            harmony.PatchAll(); // Apply all Harmony patches
+            SetupWatcher(); // Start watching for configuration file changes
         }
+
+        private void OnDestroy()
+        {
+            Config.Save();
+        }
+
+        private void Update()
+        {
+            Config.Save();
+        }
+
+        private void SetupWatcher()
+        {
+            FileSystemWatcher watcher = new(Paths.ConfigPath, ConfigFileName);
+            watcher.Changed += ReadConfigValues;
+            watcher.Created += ReadConfigValues;
+            watcher.Renamed += ReadConfigValues;
+            watcher.IncludeSubdirectories = true;
+            watcher.SynchronizingObject = ThreadingHelper.SynchronizingObject;
+            watcher.EnableRaisingEvents = true;
+        }
+
+        private void ReadConfigValues(object sender, FileSystemEventArgs e)
+        {
+            if (!File.Exists(ConfigFileFullPath)) return;
+            try
+            {
+                ErenshorQoLLogger.LogDebug("ReadConfigValues called");
+                Config.Reload();
+            }
+            catch
+            {
+                ErenshorQoLLogger.LogError($"There was an issue loading your {ConfigFileName}");
+                ErenshorQoLLogger.LogError("Please check your config entries for spelling and format!");
+            }
+        }
+
+
+        #region ConfigOptions
+
+        internal static ConfigEntry<Toggle> AutoLootToggle = null!;
+        internal static ConfigEntry<float> AutoLootDistance = null!;
+        internal static ConfigEntry<Toggle> QoLCommandsToggle = null!;
+        internal static ConfigEntry<Toggle> AutoAttackToggle = null!;
+        internal static ConfigEntry<Toggle> AutoAttackOnSkillToggle = null!;
+        internal static ConfigEntry<Toggle> AutoAttackOnSpellToggle = null!;
+        internal static ConfigEntry<Toggle> AutoAttackOnGroupAttackToggle = null!;
+        internal static ConfigEntry<Toggle> AutoAttackOnPetAttackToggle = null!;
+        internal static ConfigEntry<Toggle> AutoPetToggle = null!;
+        internal static ConfigEntry<Toggle> AutoPetOnSkillToggle = null!;
+        internal static ConfigEntry<Toggle> AutoPetOnSpellToggle = null!;
+        internal static ConfigEntry<Toggle> AutoPetOnGroupAttackToggle = null!;
+        internal static ConfigEntry<Toggle> AutoPetOnAutoAttackToggle = null!;
+        internal static ConfigEntry<Toggle> AutoGroupAttackToggle = null!;
+        internal static ConfigEntry<Toggle> AutoGroupAttackOnSkillToggle = null!;
+        internal static ConfigEntry<Toggle> AutoGroupAttackOnSpellToggle = null!;
+        internal static ConfigEntry<Toggle> AutoGroupAttackOnPetAttackToggle = null!;
+        internal static ConfigEntry<Toggle> AutoGroupAttackOnAutoAttackToggle = null!;
+        internal static ConfigEntry<Toggle> AutoRunToggle = null!;
+        internal static ConfigEntry<KeyboardShortcut> AutoRunKey = null!;
+        internal static bool _configApplied;
+
+        internal ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description)
+        {
+            ConfigEntry<T> configEntry = Config.Bind(group, name, value, description);
+            return configEntry;
+        }
+
+        internal ConfigEntry<T> config<T>(string group, string name, T value, string description)
+        {
+            return Config.Bind(group, name, value, new ConfigDescription(description));
+        }
+
+        /*
+        internal ConfigEntry<T> TextEntryConfig<T>(string group, string name, T value, string desc)
+        {
+            ConfigurationManagerAttributes attributes = new()
+            {
+                CustomDrawer = Utilities.TextAreaDrawer
+            };
+            return Config.Bind(group, name, value, new ConfigDescription(desc, null, attributes));
+        }
+
+        private class ConfigurationManagerAttributes
+        {
+            [UsedImplicitly] public int? Order;
+            [UsedImplicitly] public bool? Browsable;
+            [UsedImplicitly] public string? Category;
+            [UsedImplicitly] public Action<ConfigEntryBase>? CustomDrawer;
+        }*/
+
+        internal class AcceptableShortcuts : AcceptableValueBase // Used for KeyboardShortcut Configs 
+        {
+            public AcceptableShortcuts() : base(typeof(KeyboardShortcut))
+            {
+            }
+
+            public override object Clamp(object value) => value;
+            public override bool IsValid(object value) => true;
+
+            public override string ToDescriptionString() =>
+                "# Acceptable values: " + string.Join(", ", UnityInput.Current.SupportedKeyCodes);
+        }
+        
+        #endregion
 
         [HarmonyPatch(typeof(Character))]
         [HarmonyPatch("DoDeath")]
-        public class AutoLoot
+        class AutoLoot
         {
             /// <summary>
             /// Attempts to find the latest nearby corpse to loot after each Character.DoDeath call
             /// </summary>
-            private static bool _isEnabled = true;
 
-            public static bool IsEnabled
-            {
-                get { return _isEnabled; }
-                set { _isEnabled = value; }
-            }
-            
             static void Postfix()
             {
-                if (_isEnabled)
+                if (ErenshorQoLMod.AutoLootToggle.Value == Toggle.On)
                 {
-                    bool autoLootDebug = false;
+                    bool autoLootDebug = true;
                     float autoLootDistance = 30f;
 
 
@@ -54,14 +178,13 @@ namespace ErenshorQoL
                         {
                             if (corpse != null && corpse.MyNPC != null && corpse.MyNPC.transform != null)
                             {
-                                if (corpsetoloot == null) { corpsetoloot = corpse; }
-                                float corpsetolootDistance = Vector3.Distance(GameData.PlayerControl.transform.position, corpsetoloot.MyNPC.transform.position);
+                                
                                 float corpseDistance = Vector3.Distance(GameData.PlayerControl.transform.position, corpse.MyNPC.transform.position);
-
                                 if (corpseDistance < autoLootDistance)
                                 {
+                                    if (corpsetoloot == null) { corpsetoloot = corpse; }
+                                    float corpsetolootDistance = Vector3.Distance(GameData.PlayerControl.transform.position, corpsetoloot.MyNPC.transform.position);
                                     if (corpseDistance < corpsetolootDistance) { corpsetoloot = corpse; }
-
                                 }
                             }
                         }
@@ -76,7 +199,7 @@ namespace ErenshorQoL
                                 if (autoLootDebug) { UpdateSocialLog.LogAdd($"NPC: {corpsetoloot.MyNPC.ToString()}"); }
 
                                 LootTable loottabletoloot = corpsetoloot.MyNPC.GetComponent<LootTable>();
-                                if (loottabletoloot != null && loottabletoloot.ActualDrops.Count > 0)
+                                if (loottabletoloot != null)
                                 {
                                     if (autoLootDebug) { UnityEngine.Debug.Log($"LootTable: {loottabletoloot.ToString()}"); }
                                     if (autoLootDebug) { UpdateSocialLog.LogAdd($"LootTable: {loottabletoloot.ToString()}"); }
@@ -99,16 +222,10 @@ namespace ErenshorQoL
             /// <summary>
             /// Adds new /commands to the game: /bank, /vendor, /auction and updates /help to include gm commands
             /// </summary>
-            private static bool _isEnabled = true;
 
-            public static bool IsEnabled
-            {
-                get { return _isEnabled; }
-                set { _isEnabled = value; }
-            }
             static bool Prefix()
             {
-                if (_isEnabled)
+                if (ErenshorQoLMod.QoLCommandsToggle.Value == Toggle.On)
                 {
                     bool bankEnabled = true;
                     bool vendorEnabled = false;
@@ -122,11 +239,18 @@ namespace ErenshorQoL
                     {
                         string text = GameData.TextInput.typed.text.Substring(0, 9);
                         text = text.ToLower();
-                        bool auction = text == "/autoloot";
-                        if (auction)
+                        bool autoloot = text == "/autoloot";
+                        if (autoloot)
                         {
-                            AutoLoot.IsEnabled = !AutoLoot.IsEnabled;
-                            UpdateSocialLog.LogAdd("AutoLoot: " + AutoLoot.IsEnabled, "orange");
+                            if (ErenshorQoLMod.AutoLootToggle.Value == Toggle.Off)
+                            {
+                                ErenshorQoLMod.AutoLootToggle.Value = Toggle.On;
+                            }
+                            else if (ErenshorQoLMod.AutoLootToggle.Value == Toggle.On)
+                            {
+                                ErenshorQoLMod.AutoLootToggle.Value = Toggle.Off;
+                            }
+                            UpdateSocialLog.LogAdd("AutoLoot: " + ErenshorQoLMod.AutoLootToggle.Value.ToString(), "orange");
                             GameData.TextInput.typed.text = "";
                             GameData.TextInput.CDFrames = 10f;
                             GameData.TextInput.InputBox.SetActive(false);
@@ -155,8 +279,8 @@ namespace ErenshorQoL
                     {
                         string text = GameData.TextInput.typed.text.Substring(0, 7);
                         text = text.ToLower();
-                        bool sell = text == "/vendor";
-                        if (sell && GameData.PlayerControl.CurrentTarget != null && GameData.PlayerControl.CurrentTarget.isNPC)
+                        bool vendor = text == "/vendor";
+                        if (vendor && GameData.PlayerControl.CurrentTarget != null && GameData.PlayerControl.CurrentTarget.isNPC)
                         {
                             Character qolVendor = GameData.PlayerControl.CurrentTarget;
                             if (qolVendor.isVendor == false)
@@ -321,5 +445,52 @@ namespace ErenshorQoL
                 return true;
             }
         }
+
+        [HarmonyPatch(typeof(UseSkill))]
+        [HarmonyPatch("DoSkill")]
+        class AutoOnSkill
+        {
+            /// <summary>
+            /// Attempts to find the latest nearby corpse to loot after each Character.DoDeath call
+            /// </summary>
+            
+            static void Prefix()
+            {
+                if (ErenshorQoLMod.AutoPetToggle.Value == Toggle.On)
+                {
+                    if (ErenshorQoLMod.AutoPetOnSkillToggle.Value == Toggle.On)
+                    {
+                        AutoPet.AutoSendPet();
+                    }
+                }
+            }
+        }
+
+        class AutoPet
+        /// <summary>
+        /// Automatically sends the pet
+        /// </summary>
+        {
+            internal static void AutoSendPet()
+            {
+                bool petActive = GameData.PlayerControl.Myself.MyCharmedNPC != null;
+                bool hasTarget = GameData.PlayerControl.CurrentTarget != null;
+                bool isAggressive = false;
+                if ((hasTarget) && (petActive))
+                {
+                    //if (GameData.PlayerControl.CurrentTarget.MyFaction. < -200f)
+                    isAggressive = true;
+                    //GameData.PlayerControl.CurrentTarget.MyFaction. < -200f;
+                }
+
+                // GameData.PlayerControl.CurrentTarget.AggressiveTowards
+                if ((petActive) && (hasTarget) && (isAggressive))
+                {
+                    GameData.PlayerControl.Myself.MyCharmedNPC.CurrentAggroTarget = GameData.PlayerControl.CurrentTarget;
+                    
+                }
+            }
+        }
+            
     }
 }
