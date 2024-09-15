@@ -1,7 +1,9 @@
 # ErenshorQoL
 Erenshor Quality of Life Modpack based on BepInEx
 
-## Features: /autoloot, /bank, /auction, /help
+## Version: 1.1.1
+
+## Features (Configurable): /autoloot, /bank, /auction, /help, AutoSendPet, EnableAutoAttackonSkill
 
 ## How it works:
 
@@ -9,20 +11,31 @@ Erenshor Quality of Life Modpack based on BepInEx
 - `/bank` - Opens the bank window
 - `/auction` - Opens the auction hall window
 - `/help` - Expanded list of commands including additional available player and GM commands
+- `Auto Send Pet` - If enabled, the pet will automatically be sent when you enable autoattack (*some parts of this feature still in progress*)
+- `Auto Enable Autoattack` - If enabled, AutoAttack will be turned on when you use a skill (*some parts of this feature still in progress*)
 
 ## How to Install: 
 
-### (Recommended):
+### (Recommended for Beta Testers/full Erenshor License):
 Click the Install with Mod Manager button
 
-### Manual:
+### Manual (Recommended for Demo Users):
 
 1. Install BepInEx - https://thunderstore.io/c/erenshor/p/BepInEx/BepInExPack/.
-2. Download manually, extract ErenshorQoL.dll and move into the Erenshor\BepInEx\plugins folder.
+2. Download manually, extract the Brumdail-ErenshorQoL folder and move into the Erenshor\BepInEx\plugins folder.
+
+## How to Configure:
+A Brumdail.ErenshorQoLMod.cfg file will be automatically created in BepInEx\config the first time you launch the mod.
+Toggle full features on or off as well as parts of features by editing the file.
+If there are issues, you can revert to default values.
 
 ## Technical Details
 Adds Postfix commands to find the nearest new corpse after the Character.DoDeath() call.
 Adds Prefix commands to TypeText.CheckCommands() to include new commands
+Adds Prefix commands to UseSkill.DoSkill() to automatically perform actions when skills are used.
+Adds Postfix commands to PlayerCombat.ToggleAttack() to automatically perform actions when autoattack is enabled.
+
+## Updated Commands:
 
 ### GM commands: *most not available in the demo build*
 - `/iamadev` - Enable Dev Controls
@@ -73,3 +86,16 @@ Adds Prefix commands to TypeText.CheckCommands() to include new commands
 - `h` - greet your target
 - `q` - autoattack toggle
 - `escape (hold)` - exit to menu
+
+# Author Information
+
+### Brumdail
+
+`DISCORD:` Brumdail
+
+Special thanks to Mod config code from https://github.com/AzumattDev
+
+For Questions or Comments, find me in the Erenshor Discord:
+
+[![https://erenshor.com/gallery_gen/a5a278886e7e0bdedd386bd74929d9fa_fit.png](https://erenshor.com/gallery_gen/a5a278886e7e0bdedd386bd74929d9fa_fit.png)](https://discord.gg/DxqZc5Dc9q)
+<a href="https://discord.gg/DxqZc5Dc9q">
