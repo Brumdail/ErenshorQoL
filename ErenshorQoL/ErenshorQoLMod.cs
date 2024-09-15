@@ -12,6 +12,7 @@ using BepInEx.Logging;
 using BepInEx.Configuration;
 using JetBrains.Annotations;
 using System.Runtime.CompilerServices;
+using System.Xml.Linq;
 
 
 
@@ -150,8 +151,115 @@ namespace ErenshorQoL
             public override string ToDescriptionString() =>
                 "# Acceptable values: " + string.Join(", ", UnityInput.Current.SupportedKeyCodes);
         }
-        
+
         #endregion
+
+        public class AutoPet
+        /// <summary>
+        /// Automatically sends the pet if it's not attacking your target
+        /// </summary>
+        {
+            public static void AutoSendPet(string activatedFrom)
+            {
+                bool petActive = GameData.PlayerControl.Myself.MyCharmedNPC != null;
+                bool hasTarget = GameData.PlayerControl.CurrentTarget != null;
+                var charmedNPC = GameData.PlayerControl.Myself.MyCharmedNPC;
+                var curTarget = GameData.PlayerControl.CurrentTarget;
+                bool isAggressive = false;
+                if (hasTarget && petActive)
+                {
+                    //TODO - something like:
+                    //if (GameData.PlayerControl.CurrentTarget.MyFaction. < -200f)
+                    isAggressive = true;
+                }
+
+                // GameData.PlayerControl.CurrentTarget.AggressiveTowards
+                if (petActive && hasTarget && isAggressive)
+                {
+                    if ((charmedNPC.CurrentAggroTarget == null) || (charmedNPC.CurrentAggroTarget != curTarget))
+                    {
+                        if (hasTarget)
+                        {
+                            charmedNPC.CurrentAggroTarget = curTarget;
+                        }
+                    }
+                }
+            }
+            public static void AutoBackoffPet(string activatedFrom)
+            {
+                bool petActive = GameData.PlayerControl.Myself.MyCharmedNPC != null;
+
+                if ((petActive) && (GameData.PlayerControl.Myself.MyCharmedNPC.CurrentAggroTarget != null))
+                {
+                    GameData.PlayerControl.Myself.MyCharmedNPC.CurrentAggroTarget = null;
+                    UpdateSocialLog.LogAdd($"{GameData.PlayerControl.Myself.MyCharmedNPC.NPCName.ToString()} says: backing off...");
+                }
+            }
+        }
+        public class AutoAttack
+        /// <summary>
+        /// Automatically sends the pet if it's not attacking your target
+        /// </summary>
+        {
+            public static void EnableAutoAttack(string activatedFrom)
+            {
+                bool autoAttackDebug = false;
+
+                if (autoAttackDebug) { UpdateSocialLog.LogAdd($"Auto-Attack On " + activatedFrom + " - GameData.Autoattacking is: {GameData.Autoattacking}", "lightblue"); }
+
+                if (GameData.Autoattacking == false)
+                {
+                    // Find the PlayerCombat component
+                    PlayerCombat playerCombat = GameData.PlayerControl.Myself.GetComponent<PlayerCombat>();
+
+                    if (playerCombat != null)
+                    {
+                        // Use AccessTools reflection to get the private method info
+                        MethodInfo toggleAttackMethod = AccessTools.Method(typeof(PlayerCombat), "ToggleAttack");
+
+                        if (toggleAttackMethod != null)
+                        {
+                            // Invoke the private method
+                            toggleAttackMethod.Invoke(playerCombat, null);
+                        }
+                        if (autoAttackDebug) { UpdateSocialLog.LogAdd($"Activeated Auto-Attack On " + activatedFrom + " - GameData.Autoattacking is: {GameData.Autoattacking}", "orange"); }
+                    }
+                }
+            }
+        }
+        public class AutoGroupCommand
+        /// <summary>
+        /// Automatically command the group to attack if they are not attacking your target
+        /// </summary>
+        {
+            public static void AutoCommandAttack(string activatedFrom)
+            {
+                /*
+                    bool autoAttackDebug = false;
+
+                    if (autoAttackDebug) { UpdateSocialLog.LogAdd($"Auto-Command Group From " + activatedFrom + " - GameData.Autoattacking is: {GameData.Autoattacking}", "lightblue"); }
+
+                    if (GameData.Autoattacking == false)
+                    {
+                        // Find the PlayerCombat component
+                        PlayerCombat playerCombat = GameData.PlayerControl.Myself.GetComponent<PlayerCombat>();
+
+                        if (playerCombat != null)
+                        {
+                            // Use AccessTools reflection to get the private method info
+                            MethodInfo toggleAttackMethod = AccessTools.Method(typeof(PlayerCombat), "ToggleAttack");
+
+                            if (toggleAttackMethod != null)
+                            {
+                                // Invoke the private method
+                                toggleAttackMethod.Invoke(playerCombat, null);
+                            }
+                            if (autoAttackDebug) { UpdateSocialLog.LogAdd($"Activeated Auto-Attack On " + activatedFrom + " - GameData.Autoattacking is: {GameData.Autoattacking}", "orange"); }
+                        }
+                    }
+                */
+            }
+        }
 
         [HarmonyPatch(typeof(Character))]
         [HarmonyPatch("DoDeath")]
@@ -165,7 +273,7 @@ namespace ErenshorQoL
             {
                 if (ErenshorQoLMod.AutoLootToggle.Value == Toggle.On)
                 {
-                    bool autoLootDebug = true;
+                    bool autoLootDebug = false;
                     float autoLootDistance = 30f;
 
 
@@ -178,7 +286,7 @@ namespace ErenshorQoL
                         {
                             if (corpse != null && corpse.MyNPC != null && corpse.MyNPC.transform != null)
                             {
-                                
+
                                 float corpseDistance = Vector3.Distance(GameData.PlayerControl.transform.position, corpse.MyNPC.transform.position);
                                 if (corpseDistance < autoLootDistance)
                                 {
@@ -456,72 +564,65 @@ namespace ErenshorQoL
 
             static void Prefix()
             {
-                bool autoAttackDebug = true;
+
 
                 if (ErenshorQoLMod.AutoPetToggle.Value == Toggle.On)
                 {
                     if (ErenshorQoLMod.AutoPetOnSkillToggle.Value == Toggle.On)
                     {
-                        AutoPet.AutoSendPet();
+                        //HELP - Severity	Code	Description	Project	File	Line	Suppression State	Details
+                        //Error(active)  CS0103 The name 'AutoPet' does not exist in the current context ErenshorQoL C: \Users\brumd\Documents\GitHub\ErenshorQoL\ErenshorQoL\ErenshorQoLMod.cs   468
+
+
+                        AutoPet.AutoSendPet("Skill");
                     }
                 }
                 if (ErenshorQoLMod.AutoAttackToggle.Value == Toggle.On)
                 {
                     if (ErenshorQoLMod.AutoAttackOnSkillToggle.Value == Toggle.On)
                     {
-                        if (autoAttackDebug) {UpdateSocialLog.LogAdd($"Auto-Attack On Skill - GameData Autoattacking is: {GameData.Autoattacking}", "lightblue");}
-
-                        if (GameData.Autoattacking == false)
-                        {
-                            // Find the PlayerCombat component
-                            PlayerCombat playerCombat = GameData.PlayerControl.Myself.GetComponent<PlayerCombat>();
-
-                            if (playerCombat != null)
-                            {
-                                // Use AccessTools reflection to get the private method info
-                                MethodInfo toggleAttackMethod = AccessTools.Method(typeof(PlayerCombat), "ToggleAttack");
-
-                                if (toggleAttackMethod != null)
-                                {
-                                    // Invoke the private method
-                                    toggleAttackMethod.Invoke(playerCombat, null);
-                                }
-                                if (autoAttackDebug) { UpdateSocialLog.LogAdd($"Activeated Auto-Attack On Skill - GameData Autoattacking is: {GameData.Autoattacking}", "orange"); }
-                            }
-                        }
-
+                        //HELP - Severity	Code	Description	Project	File	Line	Suppression State	Details
+                        //Error(active)  CS0103 The name 'AutoAttack' does not exist in the current context ErenshorQoL C: \Users\brumd\Documents\GitHub\ErenshorQoL\ErenshorQoL\ErenshorQoLMod.cs   472
+                        AutoAttack.EnableAutoAttack("Skill");
                     }
                 }
-                
+
             }
         }
 
-        class AutoPet
-        /// <summary>
-        /// Automatically sends the pet
-        /// </summary>
+        [HarmonyPatch(typeof(PlayerCombat))]
+        [HarmonyPatch("ToggleAttack")]
+        class AutoOnAutoattack
         {
-            internal static void AutoSendPet()
+            /// <summary>
+            /// Automatically perform actions when Auto-Attack is used
+            /// </summary>
+
+            static void Postfix()
             {
-                bool petActive = GameData.PlayerControl.Myself.MyCharmedNPC != null;
-                bool hasTarget = GameData.PlayerControl.CurrentTarget != null;
-                bool isAggressive = false;
-                if ((hasTarget) && (petActive))
+                if (ErenshorQoLMod.AutoPetToggle.Value == Toggle.On)
                 {
-                    //if (GameData.PlayerControl.CurrentTarget.MyFaction. < -200f)
-                    isAggressive = true;
-                    //GameData.PlayerControl.CurrentTarget.MyFaction. < -200f;
-                }
-
-                // GameData.PlayerControl.CurrentTarget.AggressiveTowards
-                if ((petActive) && (hasTarget) && (isAggressive))
-                {
-
-                    GameData.PlayerControl.Myself.MyCharmedNPC.CurrentAggroTarget = GameData.PlayerControl.CurrentTarget;
-                    
+                    if ((ErenshorQoLMod.AutoPetOnSkillToggle.Value == Toggle.On) && (GameData.Autoattacking == true))
+                    {
+                        AutoPet.AutoSendPet("AutoAttack");
+                    }
+                    if ((ErenshorQoLMod.AutoPetOnSkillToggle.Value == Toggle.On) && (GameData.Autoattacking == false))
+                    {
+                        AutoPet.AutoBackoffPet("AutoAttack");
+                    }
+                    //SimPlayerGrouping.GroupAttack();
+                    /*
+                    if (ErenshorQoLMod.AutoGroupAttackToggle.Value == Toggle.On)
+                    {
+                        if (ErenshorQoLMod.AutoGroupAttackOnAutoAttackToggle.Value == Toggle.On)
+                        {
+                            AutoPet.AutoSendPet("AutoAttack");
+                        }
+                    }
+                    */
                 }
             }
+
         }
-            
     }
 }
