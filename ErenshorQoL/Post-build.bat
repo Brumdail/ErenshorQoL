@@ -1,49 +1,74 @@
 @echo on
-:: Log the start time
-echo Build started at %date% %time% -------------- >> ".\log\Post-build.log"
+:: Ensure the log directory exists
+if not exist ".\log" (
+    mkdir ".\log"
+)
 
-:: Set the target directory path manually for CMD testing
-set TargetDir=C:\Users\brumd\Documents\GitHub\ErenshorQoL\ErenshorQoL\bin\Release\netstandard2.1
-echo "Targeted DLL: %TargetDir%\ErenshorQoL.dll"
+:: Log the start time
+echo -------------- Build started at %date% %time% in %CD% -------------- >> ".\log\Post-build.log"
+
+:: Set the variables and paths
+set ModName=ErenshorQoL
+set TargetDir=.\bin\Release\netstandard2.1
+echo Targeted DLL: %TargetDir%\%ModName%.dll  >> ".\log\Post-build.log"
+set ModTestLocation=%USERPROFILE%\AppData\Roaming\Thunderstore Mod Manager\DataFolder\Erenshor\profiles\Test1\BepInEx\plugins\Brumdail-%ModName%
+echo ModTestLocation=%ModTestLocation% >> ".\log\Post-build.log"
+
 :: Copy the DLL to the current directory and log the output
-xcopy /y "%TargetDir%\ErenshorQoL.dll" "." /d >> ".\log\Post-build.log"
+echo Copy the DLL to the folder directory and log the output >> ".\log\Post-build.log"
+xcopy /y "%TargetDir%\%ModName%.dll" "." /d >> ".\log\Post-build.log"
 if %errorlevel% neq 0 (
-    echo Error %errorlevel% during copying ErenshorQoL.dll >> ".\log\Post-build.log"
+    echo !!! ---Error--- !!! %errorlevel% during copying %ModName%.dll >> ".\log\Post-build.log"
     exit /b %errorlevel%
 )
 
 :: Copy the DLL to the test mod directory and log the output
-xcopy /y "%TargetDir%\ErenshorQoL.dll" "C:\Users\brumd\AppData\Roaming\Thunderstore Mod Manager\DataFolder\Erenshor\profiles\Test1\BepInEx\plugins\Brumdail-ErenshorQoL" /d >> ".\log\Post-build.log"
-if %errorlevel% neq 0 (
-    echo Error %errorlevel% during copying ErenshorQoL.dll >> ".\log\Post-build.log"
-    exit /b %errorlevel%
+echo Copy the DLL to the test mod directory and log the output >> ".\log\Post-build.log"
+if exist "%ModTestLocation%" (
+            xcopy /y "%TargetDir%\%ModName%.dll" "%ModTestLocation%" /d >> ".\log\Post-build.log"
+        if %errorlevel% neq 0 (
+            echo !!! ---Error--- !!! %errorlevel% during copying %ModName%.dll to Test Profile >> ".\log\Post-build.log"
+            exit /b %errorlevel%
+        )
+    ) else (
+    echo !!! SKIPPING Copying the DLL to the test mod directory because it doesn't exist >> ".\log\Post-build.log"
 )
 
 :: Copy the DLL to the Thunderstore directory and log the output
-xcopy /y "%TargetDir%\ErenshorQoL.dll" "C:\Users\brumd\Documents\GitHub\ErenshorQoL\ErenshorQoL\Thunderstore" /d >> ".\log\Post-build.log"
+echo Copy the DLL to the Thunderstore directory and log the output >> ".\log\Post-build.log"
+xcopy /y "%TargetDir%\%ModName%.dll" ".\Thunderstore" /d >> ".\log\Post-build.log"
 if %errorlevel% neq 0 (
-    echo Error %errorlevel% during copying ErenshorQoL.dll >> ".\log\Post-build.log"
+    echo !!! ---Error--- !!! %errorlevel% during copying %ModName%.dll to Thunderstore directory >> ".\log\Post-build.log"
     exit /b %errorlevel%
 )
 
-:: Remove the previous zip archive if it exists
-if exist "C:\Users\brumd\Documents\GitHub\ErenshorQoL\ErenshorQoL\Thunderstore\ErenshorQoL.zip" (
-    del /f /q "ErenshorQoL.zip"
-    if %errorlevel% neq 0 (
-        echo Error during deleting previous zip >> ".\log\Post-build.log"
-        exit /b %errorlevel%
-    )
+:: Copy the LICENSE.txt to the Thunderstore directory and log the output
+echo Copy the LICENSE.txt to the Thunderstore directory and log the output >> ".\log\Post-build.log"
+xcopy /y "%USERPROFILE%\Documents\GitHub\%ModName%\LICENSE.txt" ".\Thunderstore" /d >> ".\log\Post-build.log"
+if %errorlevel% neq 0 (
+    echo !!! ---Error--- !!! %errorlevel% during copying LICENSE.txt to Thunderstore directory >> ".\log\Post-build.log"
+    exit /b %errorlevel%
+)
+
+
+:: Copy the README.md to the Thunderstore directory and log the output
+echo Copy the README.md to the Thunderstore directory and log the output >> ".\log\Post-build.log"
+xcopy /y "..\README.md" ".\Thunderstore" /d >> ".\log\Post-build.log"
+if %errorlevel% neq 0 (
+    echo !!! ---Error--- !!! %errorlevel% during copying README.md to Thunderstore directory >> ".\log\Post-build.log"
+    exit /b %errorlevel%
 )
 
 :: Create a zip archive of the specified files and log the output
-powershell -command "& { Compress-Archive -Path 'C:\Users\brumd\Documents\GitHub\ErenshorQoL\ErenshorQoL\Thunderstore\ErenshorQoL.dll', 'C:\Users\brumd\Documents\GitHub\ErenshorQoL\ErenshorQoL\Thunderstore\icon.png', 'C:\Users\brumd\Documents\GitHub\ErenshorQoL\ErenshorQoL\Thunderstore\LICENSE', 'C:\Users\brumd\Documents\GitHub\ErenshorQoL\ErenshorQoL\Thunderstore\manifest.json', 'C:\Users\brumd\Documents\GitHub\ErenshorQoL\ErenshorQoL\Thunderstore\README.md' -DestinationPath 'C:\Users\brumd\Documents\GitHub\ErenshorQoL\ErenshorQoL\Thunderstore\ErenshorQoL.zip'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } }" >> ".\log\Post-build.log"
+echo Create a zip archive of the specified files and log the output >> ".\log\Post-build.log"
+powershell -command "& { Compress-Archive -Path '.\Thunderstore\%ModName%.dll', '.\Thunderstore\icon.png', '.\Thunderstore\LICENSE.txt', '.\Thunderstore\manifest.json', '.\Thunderstore\README.md' -DestinationPath '.\Thunderstore\%ModName%.zip' -Force; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } }" >> ".\log\Post-build.log"
 if %errorlevel% neq 0 (
-    echo Error %errorlevel% during compression >> ".\log\Post-build.log"
+    echo !!! ---Error--- !!! %errorlevel% during compression >> ".\log\Post-build.log"
     exit /b %errorlevel%
 )
 
 :: Log the end time
-echo Build ended at %date% %time% -------------- >> ".\log\Post-build.log"
+echo -------------- Build ended at %date% %time% -------------- >> ".\log\Post-build.log"
 
 :: If everything was successful, exit with code 0
 exit /b 0
