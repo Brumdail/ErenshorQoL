@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Unity;
 using BepInEx.Logging;
 using BepInEx.Configuration;
 using JetBrains.Annotations;
@@ -23,7 +24,7 @@ namespace ErenshorQoL
     public class ErenshorQoLMod : BaseUnityPlugin
     {
         internal const string ModName = "ErenshorQoLMod";
-        internal const string ModVersion = "1.1.1";
+        internal const string ModVersion = "1.1.3";
         internal const string ModDescription = "Erenshor Quality of Life Mods";
         internal const string Author = "Brumdail";
         private const string ModGUID = Author + "." + ModName;
@@ -106,8 +107,9 @@ namespace ErenshorQoL
         internal static ConfigEntry<Toggle> AutoGroupAttackOnSpellToggle = null!;
         internal static ConfigEntry<Toggle> AutoGroupAttackOnPetAttackToggle = null!;
         internal static ConfigEntry<Toggle> AutoGroupAttackOnAutoAttackToggle = null!;
-        internal static ConfigEntry<Toggle> AutoRunToggle = null!;
-        internal static ConfigEntry<KeyboardShortcut> AutoRunKey = null!;
+        internal static ConfigEntry<Toggle> AutoPriceItem = null!;
+        //internal static ConfigEntry<Toggle> AutoRunToggle = null!;
+        //internal static ConfigEntry<KeyboardShortcut> AutoRunKey = null!;
         internal static bool _configApplied;
 
         internal ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description)
@@ -263,60 +265,32 @@ namespace ErenshorQoL
 
         [HarmonyPatch(typeof(Character))]
         [HarmonyPatch("DoDeath")]
+        [HarmonyPriority(50000)]
+        [HarmonyAfter("Brumdail.ErenshorREL")]
         class AutoLoot
         {
             /// <summary>
             /// Attempts to find the latest nearby corpse to loot after each Character.DoDeath call
             /// </summary>
 
-            static void Postfix()
+            static void Postfix(Character __instance)
             {
-                if (ErenshorQoLMod.AutoLootToggle.Value == Toggle.On)
+                if ((ErenshorQoLMod.AutoLootToggle.Value == Toggle.On) && (__instance != null))
                 {
                     bool autoLootDebug = false;
                     float autoLootDistance = 30f;
-
-
-                    if (CorpseDataManager.AllCorpseData != null && CorpseDataManager.AllCorpseData.Count > 0)
+                    autoLootDistance = ErenshorQoLMod.AutoLootDistance.Value;
+                    if (autoLootDistance < 0) { autoLootDistance = 0; }
+                    float NPCDistance = Vector3.Distance(GameData.PlayerControl.transform.position, __instance.MyNPC.transform.position);
+                    if (NPCDistance < autoLootDistance)
                     {
-                        CorpseData corpsetoloot = null;
-
-
-                        foreach (var corpse in CorpseDataManager.AllCorpseData)
+                        LootTable loottabletoloot = __instance.MyNPC.GetComponent<LootTable>();
+                        if (loottabletoloot != null)
                         {
-                            if (corpse != null && corpse.MyNPC != null && corpse.MyNPC.transform != null)
-                            {
-
-                                float corpseDistance = Vector3.Distance(GameData.PlayerControl.transform.position, corpse.MyNPC.transform.position);
-                                if (corpseDistance < autoLootDistance)
-                                {
-                                    if (corpsetoloot == null) { corpsetoloot = corpse; }
-                                    float corpsetolootDistance = Vector3.Distance(GameData.PlayerControl.transform.position, corpsetoloot.MyNPC.transform.position);
-                                    if (corpseDistance < corpsetolootDistance) { corpsetoloot = corpse; }
-                                }
-                            }
-                        }
-
-                        if (corpsetoloot != null)
-                        {
-                            if (autoLootDebug) { UnityEngine.Debug.Log($"Corpse: {corpsetoloot.ToString()}"); }
-                            if (autoLootDebug) { UpdateSocialLog.LogAdd($"Corpse: {corpsetoloot.ToString()}"); }
-                            if (corpsetoloot.MyNPC != null)
-                            {
-                                if (autoLootDebug) { UnityEngine.Debug.Log($"NPC: {corpsetoloot.MyNPC.ToString()}"); }
-                                if (autoLootDebug) { UpdateSocialLog.LogAdd($"NPC: {corpsetoloot.MyNPC.ToString()}"); }
-
-                                LootTable loottabletoloot = corpsetoloot.MyNPC.GetComponent<LootTable>();
-                                if (loottabletoloot != null)
-                                {
-                                    if (autoLootDebug) { UnityEngine.Debug.Log($"LootTable: {loottabletoloot.ToString()}"); }
-                                    if (autoLootDebug) { UpdateSocialLog.LogAdd($"LootTable: {loottabletoloot.ToString()}"); }
-                                    loottabletoloot.LoadLootTable();
-                                    if (autoLootDebug) { UnityEngine.Debug.Log($"LoadedLootTable: {loottabletoloot.ToString()}"); }
-                                    if (autoLootDebug) { UpdateSocialLog.LogAdd($"LoadedLootTable: {loottabletoloot.ToString()}"); }
-                                    GameData.LootWindow.LootAll();
-                                }
-                            }
+                            if (autoLootDebug) { UpdateSocialLog.LogAdd($"LootTable: {loottabletoloot.ToString()}"); }
+                            loottabletoloot.LoadLootTable();
+                            if (autoLootDebug) { UpdateSocialLog.LogAdd($"LoadedLootTable: {loottabletoloot.ToString()}"); }
+                            GameData.LootWindow.LootAll();
                         }
                     }
                 }
@@ -427,7 +401,7 @@ namespace ErenshorQoL
                         }
                     }
                     inputLengthCheck = GameData.TextInput.typed.text.Length >= 8;
-                    if ((inputLengthCheck) && (auctionEnabled))
+                    if ((inputLengthCheck) && (auctionEnabled) && (!GameData.GM.DemoBuild))
                     {
                         string text = GameData.TextInput.typed.text.Substring(0, 8);
                         text = text.ToLower();
@@ -620,6 +594,26 @@ namespace ErenshorQoL
                         }
                     }
                     */
+                }
+            }
+
+        }
+
+        [HarmonyPatch(typeof(AuctionHouseUI))]
+        [HarmonyPatch("OpenListItem")]
+        class AutoPriceYourItem
+        {
+            /// <summary>
+            /// Automatically set the maximum gold value for an item that will sell
+            /// </summary>
+
+            static void Postfix(AuctionHouseUI __instance)
+            {
+                if (ErenshorQoLMod.AutoPriceItem.Value == Toggle.On)
+                {
+                    int maxAHPrice = 0;
+                    maxAHPrice = GameData.SlotToBeListed.MyItem.ItemValue * 6-1;
+                    GameData.AHUI.ListPrice.text = $"{maxAHPrice}";
                 }
             }
 

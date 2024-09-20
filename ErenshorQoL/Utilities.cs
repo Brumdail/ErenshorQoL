@@ -35,8 +35,9 @@ namespace ErenshorQoL
             //ErenshorQoLMod.AutoGroupAttackOnSpellToggle = ErenshorQoLMod.context.config("5 - Auto Group Attack", "Auto Group Attack on Spell Cast", ErenshorQoLMod.Toggle.Off, "(not yet implemented) Automatically command the group to attack when a spell is cast.");
             //ErenshorQoLMod.AutoGroupAttackOnPetAttackToggle = ErenshorQoLMod.context.config("5 - Auto Group Attack", "Auto Group Attack on Pet Attack Command", ErenshorQoLMod.Toggle.Off, "(not yet implemented) Automatically command the group to attack when a pet attack command is issued.");
             //ErenshorQoLMod.AutoGroupAttackOnAutoAttackToggle = ErenshorQoLMod.context.config("5 - Auto Group Attack", "Auto Group Attack on Auto Attack", ErenshorQoLMod.Toggle.Off, "(not yet implemented) Automatically command the group to attack when auto-attack is enabled.");
-            //ErenshorQoLMod.AutoRunToggle = ErenshorQoLMod.context.config("6 - Auto Run", "Enable Auto Run", ErenshorQoLMod.Toggle.Off, "(not yet implemented) Automatically run while enabled");
-            //ErenshorQoLMod.AutoRunKey = ErenshorQoLMod.context.config("6 - Auto Run", "Auto Run Key", new KeyboardShortcut(KeyCode.Break), new ConfigDescription("Key(s) used to toggle Auto Run. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html", new ErenshorQoLMod.AcceptableShortcuts()));
+            //ErenshorQoLMod.AutoRunToggle = ErenshorQoLMod.context.config("NA - Auto Run", "Enable Auto Run", ErenshorQoLMod.Toggle.Off, "(not yet implemented) Automatically run while enabled");
+            //ErenshorQoLMod.AutoRunKey = ErenshorQoLMod.context.config("NA - Auto Run", "Auto Run Key", new KeyboardShortcut(KeyCode.Break), new ConfigDescription("Key(s) used to toggle Auto Run. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html", new ErenshorQoLMod.AcceptableShortcuts()));
+            ErenshorQoLMod.AutoPriceItem = ErenshorQoLMod.context.config("6 - Auto Price Item", "Auto Set AH Item Price", ErenshorQoLMod.Toggle.On, "Automatically start with the highest sellable auction house price when adding an item.");
         }
     }
 }

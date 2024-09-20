@@ -5,8 +5,8 @@
     <Nullable>enable</Nullable>
     <Title>Erenshor Quality of Life Mods</Title>
     <Authors>Brumdail</Authors>
-	<Version>1.1.1</Version>
-	<FileVersion>1.1.0.0</FileVersion>
+	<Version>1.1.3</Version>
+	<FileVersion>1.1.3.0</FileVersion>
 	<LangVersion>9.0</LangVersion>
   </PropertyGroup>
 
@@ -19,6 +19,9 @@
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>lib\BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>lib\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>lib\UnityEngine.dll</HintPath>
