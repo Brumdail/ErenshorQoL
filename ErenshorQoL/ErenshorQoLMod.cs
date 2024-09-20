@@ -275,7 +275,7 @@ namespace ErenshorQoL
 
             static void Postfix(Character __instance)
             {
-                if ((ErenshorQoLMod.AutoLootToggle.Value == Toggle.On) && (__instance != null))
+                if ((ErenshorQoLMod.AutoLootToggle.Value == Toggle.On) && (__instance != null) && (__instance.isNPC) && (__instance.MyNPC != null))
                 {
                     bool autoLootDebug = false;
                     float autoLootDistance = 30f;
