@@ -1,36 +1,73 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	
+	<!-- General project properties -->
+	<PropertyGroup>
+		<!-- Target framework for the project -->
+		<TargetFramework>netstandard2.1</TargetFramework>
+		<!-- Enable nullable reference types -->
+		<Nullable>enable</Nullable>
+		<!-- Mod title, author, and version retrieved from the project -->
+		<Title>$(ModTitle)</Title>
+		<Authors>$(Author)</Authors>
+		<Version>$(ModVersion)</Version>
+		<FileVersion>$(FileVersion)</FileVersion>
+		<LangVersion>9.0</LangVersion>
+		<!-- Path to the AppData folder -->
+		<AppDataPath>$([System.Environment]::GetFolderPath(SpecialFolder.ApplicationData))</AppDataPath>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <Nullable>enable</Nullable>
-    <Title>Erenshor Quality of Life Mods</Title>
-    <Authors>Brumdail</Authors>
-	<Version>1.1.3</Version>
-	<FileVersion>1.1.3.0</FileVersion>
-	<LangVersion>9.0</LangVersion>
-  </PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="System.Linq" Version="4.3.0" />
+	</ItemGroup>
 
-  <ItemGroup>
+	<Choose>
+		<When Condition="($(OS) == 'Unix' OR $(OS) == 'OSX') AND $(GamePath) == ''">
+			<PropertyGroup>
+				<GamePath Condition="!Exists('$(GamePath)')">$(HOME)/.steam/steam/steamapps/common/Erenshor</GamePath>
+				<GamePath Condition="!Exists('$(GamePath)')">$(HOME)/Library/Application Support/Steam/steamapps/common/Erenshor/Contents/MacOS</GamePath>
+				<CorlibPath Condition="!Exists('$(CorlibPath)') AND Exists('$(GamePath)')">$(GamePath)\Erenshor_Data\Managed</CorlibPath>
+			</PropertyGroup>
+		</When>
+		<When Condition="($(OS) == 'Windows_NT') AND $(GamePath) == ''">
+			<PropertyGroup>
+
+				<GamePath Condition="!Exists('$(GamePath)')">$([MSBuild]::GetRegistryValueFromView('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 2382520', 'InstallLocation', null, RegistryView.Registry64, RegistryView.Registry32))</GamePath>
+				<_SteamLibraryPath>$([MSBuild]::GetRegistryValueFromView('HKEY_CURRENT_USER\SOFTWARE\Valve\Steam', 'SteamPath', null, RegistryView.Registry32))</_SteamLibraryPath>
+				<GamePath Condition="!Exists('$(GamePath)') AND '$(_SteamLibraryPath)' != ''">$(_SteamLibraryPath)\steamapps\common\Erenshor</GamePath>
+				<GamePath Condition="!Exists('$(GamePath)') AND Exists('$(ErenshorGamePath)')">$(ErenshorGamePath)</GamePath>
+				<GamePath Condition="!Exists('$(GamePath)')">C:\Program Files\Steam\steamapps\common\Erenshor</GamePath>
+				<GamePath Condition="!Exists('$(GamePath)')">C:\Program Files (x86)\Steam\steamapps\common\Erenshor</GamePath>
+				<GamePath Condition="!Exists('$(GamePath)')">D:\SteamLibrary\steamapps\common\Erenshor</GamePath>
+				<BepInExPath Condition="!Exists('$(BepInExPath)') AND Exists('$(GamePath)')">$(AppDataPath)\Thunderstore Mod Manager\DataFolder\Erenshor\cache\BepInEx-BepInExPack\5.4.2100\BepInExPack\BepInEx\core</BepInExPath>
+				<BepInExPath Condition="!Exists('$(BepInExPath)') AND Exists('$(GamePath)')">$(AppDataPath)\Thunderstore Mod Manager\DataFolder\Erenshor\profiles\Default\BepInEx\core</BepInExPath>
+				<BepInExPath Condition="!Exists('$(BepInExPath)') AND Exists('$(GamePath)')">$(GamePath)\BepInEx</BepInExPath>
+				<CorlibPath Condition="!Exists('$(CorlibPath)') AND Exists('$(GamePath)')">$(GamePath)\Erenshor_Data\Managed</CorlibPath>
+			</PropertyGroup>
+		</When>
+	</Choose>
+
+	<ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>lib\0Harmony.dll</HintPath>
+      <HintPath>$(BepInExPath)\0Harmony.dll</HintPath>
+	</Reference>
+	<Reference Include="BepInEx">
+	  <HintPath>$(BepInExPath)\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>lib\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="BepInEx">
-      <HintPath>lib\BepInEx.dll</HintPath>
+      <HintPath>$(CorlibPath)\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>lib\Unity.TextMeshPro.dll</HintPath>
+      <HintPath>$(CorlibPath)\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>lib\UnityEngine.dll</HintPath>
+      <HintPath>$(CorlibPath)\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>lib\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>$(CorlibPath)\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>lib\UnityEngine.UI.dll</HintPath>
+      <HintPath>$(CorlibPath)\UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
 

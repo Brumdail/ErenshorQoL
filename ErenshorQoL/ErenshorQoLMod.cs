@@ -25,6 +25,8 @@ namespace ErenshorQoL
     {
         internal const string ModName = "ErenshorQoLMod";
         internal const string ModVersion = "1.1.3";
+        internal const string FileVersion = "1.1.3";
+        internal const string ModTitle = "Erenshor Quality of Life Mods";
         internal const string ModDescription = "Erenshor Quality of Life Mods";
         internal const string Author = "Brumdail";
         private const string ModGUID = Author + "." + ModName;
