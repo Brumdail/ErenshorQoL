@@ -24,8 +24,17 @@ namespace ErenshorQoL
     public class ErenshorQoLMod : BaseUnityPlugin
     {
         internal const string ModName = "ErenshorQoLMod";
-        internal const string ModVersion = "1.1.3";
-        internal const string FileVersion = "1.1.3";
+        internal const int major = 1;
+        internal const int minor = 2;
+        internal const int BuildVersion = 3;
+        internal const int RevsionVersion = 4;
+        
+        //internal const Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+        //internal DateTime buildDate = new DateTime(2000, 1, 1)
+        //                        .AddDays(version.Build).AddSeconds(version.Revision * 2);
+        //internal string displayableVersion = $"{version} ({buildDate})";
+        internal const string ModVersion = "$(MajorVersion).$(MinorVersion)";
+        internal const string FileVersion = "$(major).$(minor).($BuildVersion).$(RevisionVersion)";
         internal const string ModTitle = "Erenshor Quality of Life Mods";
         internal const string ModDescription = "Erenshor Quality of Life Mods";
         internal const string Author = "Brumdail";

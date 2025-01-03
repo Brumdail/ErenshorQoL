@@ -1,4 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- Generate Version Based on Date -->
+	<Target Name="AssemblyVersion" BeforeTargets="CoreCompile" DependsOnTargets="PrepareForBuild">
+		<PropertyGroup>
+			<AssemblyInfo>Properties\AssemblyInfo.cs</AssemblyInfo>
+			<AssemblyInfoContent>$([System.IO.File]::ReadAllText($(AssemblyInfo)))</AssemblyInfoContent>
+			<VersionRegex>(\[\s*assembly\s*:\s*AssemblyVersion\(\s*"(\d+)\.(\d+)\.(\d+)(\.)(\d+)("\)\s*\]))</VersionRegex>
+			<FileVersionRegex>(\[\s*assembly\s*:\s*AssemblyFileVersion\(\s*"(\d+)\.(\d+)\.(\d+)(\.)(\d+)("\)\s*\]))</FileVersionRegex>
+
+			<NowTime>$([System.DateTime]::Now.Year)</NowTime>
+			<MajorVersion>$([MSBuild]::Subtract($(NowTime), 2024).ToString("0"))</MajorVersion>
+			<MinorBuildRevision>$([System.DateTime]::Now.ToString("M.d.hhm"))</MinorBuildRevision>
+
+			<NewAssemblyVersion>[assembly: AssemblyVersion("$(MajorVersion).$(MinorBuildRevision)")]</NewAssemblyVersion>
+			<NewAssemblyFileVersion>[assembly: AssemblyFileVersion("$(MajorVersion).$(MinorBuildRevision)")]</NewAssemblyFileVersion>
+
+			<!-- Perform replacements in-memory -->
+			<UpdatedContent>$([System.Text.RegularExpressions.Regex]::Replace($(AssemblyInfoContent), $(VersionRegex), $(NewAssemblyVersion)))</UpdatedContent>
+			<FinalContent>$([System.Text.RegularExpressions.Regex]::Replace($(UpdatedContent), $(FileVersionRegex), $(NewAssemblyFileVersion)))</FinalContent>
+		</PropertyGroup>
+
+		<!-- Write Final Content to AssemblyInfo.cs file -->
+		<WriteLinesToFile File="$(AssemblyInfo)" Lines="$(FinalContent)" Overwrite="true" />
+	</Target>
+
 	
 	<!-- General project properties -->
 	<PropertyGroup>
@@ -8,18 +33,18 @@
 		<Nullable>enable</Nullable>
 		<!-- Mod title, author, and version retrieved from the project -->
 		<Title>$(ModTitle)</Title>
-		<Authors>$(Author)</Authors>
-		<Version>$(ModVersion)</Version>
-		<FileVersion>$(FileVersion)</FileVersion>
+		<Authors>$(Authors)</Authors>
 		<LangVersion>9.0</LangVersion>
 		<!-- Path to the AppData folder -->
 		<AppDataPath>$([System.Environment]::GetFolderPath(SpecialFolder.ApplicationData))</AppDataPath>
+		<Company />
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
-	<ItemGroup>
+	<!--<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="System.Linq" Version="4.3.0" />
-	</ItemGroup>
+	</ItemGroup>-->
 
 	<Choose>
 		<When Condition="($(OS) == 'Unix' OR $(OS) == 'OSX') AND $(GamePath) == ''">
@@ -46,6 +71,13 @@
 			</PropertyGroup>
 		</When>
 	</Choose>
+
+	<ItemGroup>
+	  <None Include="..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
 
 	<ItemGroup>
     <Reference Include="0Harmony">
