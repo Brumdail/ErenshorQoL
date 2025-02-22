@@ -19,12 +19,11 @@
 			<UpdatedContent>$([System.Text.RegularExpressions.Regex]::Replace($(AssemblyInfoContent), $(VersionRegex), $(NewAssemblyVersion)))</UpdatedContent>
 			<FinalContent>$([System.Text.RegularExpressions.Regex]::Replace($(UpdatedContent), $(FileVersionRegex), $(NewAssemblyFileVersion)))</FinalContent>
 		</PropertyGroup>
-
+		
 		<!-- Write Final Content to AssemblyInfo.cs file -->
 		<WriteLinesToFile File="$(AssemblyInfo)" Lines="$(FinalContent)" Overwrite="true" />
 	</Target>
 
-	
 	<!-- General project properties -->
 	<PropertyGroup>
 		<!-- Target framework for the project -->
@@ -45,6 +44,8 @@
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="System.Linq" Version="4.3.0" />
 	</ItemGroup>-->
+
+
 
 	<Choose>
 		<When Condition="($(OS) == 'Unix' OR $(OS) == 'OSX') AND $(GamePath) == ''">
