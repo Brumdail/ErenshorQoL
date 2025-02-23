@@ -15,6 +15,7 @@ using JetBrains.Annotations;
 using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 using System.Diagnostics;
+using System.Text;
 
 namespace ErenshorQoL
 {
@@ -23,7 +24,7 @@ namespace ErenshorQoL
     public class ErenshorQoLMod : BaseUnityPlugin
     {
         internal const string ModName = "ErenshorQoLMod";
-        internal const string ModVersion = "1.1.2.1134"; //const so should be manually updated before release
+        internal const string ModVersion = "1.2.22.0457"; //const so should be manually updated before release
         internal const string ModTitle = "Erenshor Quality of Life Mods";
         internal const string ModDescription = "Erenshor Quality of Life Mods";
         internal const string Author = "Brumdail";
@@ -319,7 +320,7 @@ namespace ErenshorQoL
                 UpdateSocialLog.LogAdd("/bank - Opens the bank window", "lightblue");
                 //UpdateSocialLog.LogAdd("/vendor - Sets target NPC to a vendor", "lightblue");
                 UpdateSocialLog.LogAdd("/auction - Opens the auction hall window", "lightblue");
-                //UpdateSocialLog.LogAdd("/allscene - Lists all scenes", "lightblue");
+                UpdateSocialLog.LogAdd("/allscenes - Lists all scenes", "lightblue");
             }
 
             static void HelpPlayer()
@@ -364,7 +365,7 @@ namespace ErenshorQoL
                 UpdateSocialLog.LogAdd("/hpscale 1.0 (multiplier) - NPC HP scale modifier. You must zone to activate this modifier", "orange");
                 UpdateSocialLog.LogAdd("/livenpc - List living NPCs in zone", "orange");
                 UpdateSocialLog.LogAdd("/levelup - Maxes target's Earned XP", "orange");
-                UpdateSocialLog.LogAdd("/level-- Reduce target's level by 1", "orange");
+                UpdateSocialLog.LogAdd("/level-- - Reduce target's level by 1", "orange");
                 UpdateSocialLog.LogAdd("/simlocs - Report sim zone population", "orange");
                 UpdateSocialLog.LogAdd("/sivakme - Add Sivakrux coin to inventory", "orange");
                 UpdateSocialLog.LogAdd("/fastdev - Increases player RunSpeed to 24", "orange");
@@ -377,7 +378,7 @@ namespace ErenshorQoL
                 UpdateSocialLog.LogAdd("/devkill - Kill current target", "orange");
                 UpdateSocialLog.LogAdd("/debugxp - Add 1000 xp to the player", "orange");
                 UpdateSocialLog.LogAdd("/invisme - Toggle Dev Invis", "orange");
-                UpdateSocialLog.LogAdd("/toscene Stowaway - Teleport to the named scene", "orange");
+                UpdateSocialLog.LogAdd("/toscene Stowaway - Teleport to the named scene (may need to use Unstuck Me). Check scenes with /simlocs or use this list of Scenes: Abyssal, Azure, AzynthiClear, Blight, Bonepits, Brake, Braxonia, Braxonian, Duskenlight, Elderstone, FernallaField, Hidden, Krakengard, Loomingwood, Lost Cellar, Malaroth, PrielianPlateau, Ripper, Rockshade, Rottenfoot, SaltedStrand, Silkengrass, Soluna, Stowaway, Tutorial (Island Tomb), Underspine, Vitheo, Windwashed", "orange");
                 UpdateSocialLog.LogAdd("/invinci - Make player invincible", "orange");
                 UpdateSocialLog.LogAdd("/faction 5 - Modify player's faction standing of the target's faction. Use negative numbers to decrease faction.", "orange");
 
@@ -411,7 +412,7 @@ namespace ErenshorQoL
                     bool bankEnabled = true;
                     bool vendorEnabled = false;
                     bool auctionEnabled = true;
-                    bool allSceneEnabled = false;
+                    bool allSceneEnabled = true;
                     bool helpGMEnabled = true;
 
                     bool inputLengthCheck = false;
@@ -461,6 +462,14 @@ namespace ErenshorQoL
                         string text = GameData.TextInput.typed.text.Substring(0, 7);
                         text = text.ToLower();
                         bool vendor = text == "/vendor";
+
+                        //TODO: This doesn't work. The idea would be to spawn a vendor nearby the player.
+                        /*
+                        GameObject myVendor;
+                        GameData.NPCEffects.
+                        myVendor = ShiverEvent.Kio;
+
+
                         if (vendor && GameData.PlayerControl.CurrentTarget != null && GameData.PlayerControl.CurrentTarget.isNPC)
                         {
                             Character qolVendor = GameData.PlayerControl.CurrentTarget;
@@ -497,7 +506,7 @@ namespace ErenshorQoL
                         else
                         {
                             UpdateSocialLog.LogAdd("/vendor command requires an NPC target", "yellow");
-                        }
+                        }*/
                     }
                     inputLengthCheck = GameData.TextInput.typed.text.Length >= 8;
                     if ((inputLengthCheck) && (auctionEnabled) && (!GameData.GM.DemoBuild))
@@ -515,42 +524,32 @@ namespace ErenshorQoL
                             return false;
                         }
                     }
-                    inputLengthCheck = GameData.TextInput.typed.text.Length >= 9;
+                    inputLengthCheck = GameData.TextInput.typed.text.Length >= 10;
                     if ((inputLengthCheck) && (allSceneEnabled))
                     {
-                        string text = GameData.TextInput.typed.text.Substring(0, 9);
+                        string text = GameData.TextInput.typed.text.Substring(0, 10);
                         text = text.ToLower();
-                        bool allScene = text == "/allscene";
+                        bool allScene = text == "/allscenes";
                         if (allScene)
                         {
-                            /*
-                             * WIP
-                            UpdateSocialLog.LogAdd("Number of loaded Scenes:", SceneManager.loadedSceneCount.ToString(), "yellow");
-                            
-                            for (int s = 0; s < SceneManager.sceneCount; s++) //get total number of scenes in build
-                            {
-                                if (SceneManager.GetSceneByBuildIndex(s)
-                                {
+                            StringBuilder zoneNamesBuilder = new StringBuilder("Stowaway, Tutorial");
 
-                                }
+                            foreach (ZoneAtlasEntry zoneAtlasEntry in ZoneAtlas.Atlas)
+                            {
+                                zoneNamesBuilder.Append(", " + zoneAtlasEntry.ZoneName);
                             }
 
-                            Scene[] allScenes = SceneManager.GetAllScenes();
-
-
-                            Debug.Log("total number of scenes: " + allScenes.Length);
-                            int numOfScenesInBuild = 0;
-
-
-                            UpdateSocialLog.LogAdd(SceneManager.GetSceneByBuildIndex.toString());
+                            string zoneNames = zoneNamesBuilder.ToString();
+                            UpdateSocialLog.LogAdd("Zone Names: " + zoneNames);
 
                             GameData.TextInput.typed.text = "";
                             GameData.TextInput.CDFrames = 10f;
                             GameData.TextInput.InputBox.SetActive(false);
-                            GameData.PlayerTyping = false;*/
+                            GameData.PlayerTyping = false;
                             return false;
                         }
                     }
+
                     inputLengthCheck = GameData.TextInput.typed.text.Length >= 5;
                     if ((inputLengthCheck) && (helpGMEnabled))
                     {
