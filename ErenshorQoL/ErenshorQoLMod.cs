@@ -26,7 +26,7 @@ namespace ErenshorQoL
     public class ErenshorQoLMod : BaseUnityPlugin
     {
         internal const string ModName = "ErenshorQoLMod";
-        internal const string ModVersion = "1.2.22.0457"; //const so should be manually updated before release
+        internal const string ModVersion = "1.2.24.1119"; //const so should be manually updated before release
         internal const string ModTitle = "Erenshor Quality of Life Mods";
         internal const string ModDescription = "Erenshor Quality of Life Mods";
         internal const string Author = "Brumdail";
