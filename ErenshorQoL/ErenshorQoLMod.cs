@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Audio;
 using Unity;
 using BepInEx.Logging;
 using BepInEx.Configuration;
@@ -16,6 +17,7 @@ using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 using System.Diagnostics;
 using System.Text;
+using static Unity.IO.LowLevel.Unsafe.AsyncReadManagerMetrics;
 
 namespace ErenshorQoL
 {
@@ -99,6 +101,7 @@ namespace ErenshorQoL
 
         internal static ConfigEntry<Toggle> AutoLootToggle = null!;
         internal static ConfigEntry<float> AutoLootDistance = null!;
+        internal static ConfigEntry<int> AutoLootMinimum = null!;
         internal static ConfigEntry<Toggle> AutoLootToBankToggle = null!;
         internal static ConfigEntry<Toggle> QoLCommandsToggle = null!;
         internal static ConfigEntry<Toggle> AutoAttackToggle = null!;
@@ -722,34 +725,69 @@ namespace ErenshorQoL
 
         [HarmonyPatch(typeof(LootWindow))]
         [HarmonyPatch("LootAll")]
-        class LootAllFiltered
+        public static class LootWindowPatch
         {
-                /// <summary>
-                /// Automatically loot items to your inventory, or bank if inventory is full or item is undesired
-                /// </summary>
-            [HarmonyPostfix] static void Postfix(LootWindow __instance)
+            public static bool Prefix(LootWindow __instance)
             {
                 foreach (ItemIcon itemIcon in __instance.LootSlots)
                 {
-                    bool realItem = itemIcon.MyItem != GameData.PlayerInv.Empty && !GameData.PlayerInv.AddItemToInv(itemIcon.MyItem);
-                    if (realItem)
-                        {
-                            
-                        /* WIP
-                            // Logic to add item to the bank
-                            bool addedToBank = BankInventory.AddToBank(itemIcon.MyItem);
+                    bool isEmpty = itemIcon.MyItem == GameData.PlayerInv.Empty;
+                    if (!isEmpty)
+                    {
+                        if (itemIcon.MyItem.ItemValue >= ErenshorQoLMod.AutoLootMinimum.Value)
+                        { //only loot if at least minimum value
+                            bool isGeneralItem = itemIcon.MyItem.RequiredSlot == Item.SlotType.General;
+                            bool addedToInventory = false;
+                            bool normalQuantity = false;
+                            bool blueBlessed = false;
+                            bool pinkBlessed = false;
 
-                            if (addedToBank)
+                            if (isGeneralItem)
                             {
-                                UpdateSocialLog.LogAdd("Added to bank: " + itemIcon.MyItem.ItemName, "green");
+                                addedToInventory = GameData.PlayerInv.AddItemToInv(itemIcon.MyItem);
+                            }
+                            else
+                            {
+                                addedToInventory = GameData.PlayerInv.AddItemToInv(itemIcon.MyItem, itemIcon.Quantity);
+                                normalQuantity = itemIcon.Quantity <= 1;
+                                blueBlessed = itemIcon.Quantity == 2;
+                                pinkBlessed = itemIcon.Quantity == 3;
+
+                            }
+                            bool looted = addedToInventory;
+                            if (looted)
+                            {
+                                if (normalQuantity)
+                                {
+                                    UpdateSocialLog.LogAdd("Looted Item: " + itemIcon.MyItem.ItemName, "yellow");
+                                }
+                                else if (blueBlessed)
+                                {
+                                    UpdateSocialLog.LogAdd("Looted Blessed Item: " + itemIcon.MyItem.ItemName + "!", "lightblue");
+                                }
+                                else if (pinkBlessed)
+                                {
+                                    UpdateSocialLog.LogAdd("Looted Blessed Item: " + itemIcon.MyItem.ItemName + "!", "pink");
+                                }
+
+                                itemIcon.MyItem = GameData.PlayerInv.Empty;
+                                itemIcon.UpdateSlotImage();
                             }
                             else
                             {
                                 UpdateSocialLog.LogAdd("No room for " + itemIcon.MyItem.ItemName, "yellow");
-                            }*/
+                            }
+                        }
+                        else
+                        {
+                            UpdateSocialLog.LogAdd("Item below threshold: " + itemIcon.MyItem.ItemName + " - Value: " + itemIcon.MyItem.ItemValue, "yellow");
                         }
                     }
                 }
+                GameData.PlayerAud.PlayOneShot(GameData.GM.GetComponent<Misc>().DropItem, GameData.PlayerAud.volume / 2f * GameData.SFXVol);
+                __instance.CloseWindow();
+                return false; // Skip the original method
             }
+        }
     }
 }
