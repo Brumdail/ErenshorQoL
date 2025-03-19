@@ -86,7 +86,7 @@ namespace ErenshorQoL
             if (!File.Exists(ConfigFileFullPath)) return;
             try
             {
-                ErenshorQoLLogger.LogDebug("ReadConfigValues called");
+                //ErenshorQoLLogger.LogDebug("ReadConfigValues called");
                 Config.Reload();
             }
             catch
@@ -100,6 +100,7 @@ namespace ErenshorQoL
         #region ConfigOptions
 
         internal static ConfigEntry<Toggle> AutoLootToggle = null!;
+        internal static ConfigEntry<Toggle> AutoLootDebug = null!;
         internal static ConfigEntry<float> AutoLootDistance = null!;
         internal static ConfigEntry<int> AutoLootMinimum = null!;
         internal static ConfigEntry<Toggle> AutoLootToBankToggle = null!;
@@ -285,7 +286,7 @@ namespace ErenshorQoL
 
             static void Postfix(Character __instance)
             {
-                if ((ErenshorQoLMod.AutoLootToggle.Value == Toggle.On) && (__instance != null) && (__instance.isNPC) && (__instance.MyNPC != null))
+                if ((ErenshorQoLMod.AutoLootToggle.Value == Toggle.On) && (__instance != null) && (__instance.isNPC) && (__instance.MyNPC != null) && (GameData.PlayerControl.Myself.Alive))
                 {
                     bool autoLootDebug = false;
                     float autoLootDistance = 30f;
@@ -780,7 +781,10 @@ namespace ErenshorQoL
                         }
                         else
                         {
-                            UpdateSocialLog.LogAdd("Item below threshold: " + itemIcon.MyItem.ItemName + " - Value: " + itemIcon.MyItem.ItemValue, "yellow");
+                            if (ErenshorQoLMod.AutoLootDebug.Value == Toggle.On)
+                            {
+                                UpdateSocialLog.LogAdd("Item below " + ErenshorQoLMod.AutoLootMinimum.Value + " threshold: " + itemIcon.MyItem.ItemName + " - Value: " + itemIcon.MyItem.ItemValue, "yellow");
+                            }
                         }
                     }
                 }
