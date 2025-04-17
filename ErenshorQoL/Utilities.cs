@@ -22,7 +22,7 @@ namespace ErenshorQoL
             ErenshorQoLMod.AutoLootDistance = ErenshorQoLMod.context.config("1 - AutoLoot", "Auto Loot Distance", 30f, "Distance to automatically loot items from defeated enemies. Acceptable Range <float> 5-10000");
             ErenshorQoLMod.AutoLootMinimum = ErenshorQoLMod.context.config("1 - AutoLoot", "Auto Loot Minimum Threshold", 0, "The minimum value of an item to automatically loot. Acceptable Range <int> 0-9999999");
             ErenshorQoLMod.AutoLootDebug = ErenshorQoLMod.context.config("1 - AutoLoot", "AutoLoot Debug Messages", ErenshorQoLMod.Toggle.Off, "Enable loot debug messages?");
-            ErenshorQoLMod.AutoLootToBankToggle = ErenshorQoLMod.context.config("1 - AutoLoot", "Enable AutoLooting into the Bank", ErenshorQoLMod.Toggle.On, "Enable automatic looting of items into your bank?");
+            //ErenshorQoLMod.AutoLootToBankToggle = ErenshorQoLMod.context.config("1 - AutoLoot", "Enable AutoLooting into the Bank", ErenshorQoLMod.Toggle.On, "(not yet implemented) Enable automatic looting of items into your bank?");
             ErenshorQoLMod.QoLCommandsToggle = ErenshorQoLMod.context.config("2 - QoL Commands", "Enable QoL Commands", ErenshorQoLMod.Toggle.On, "Enable additional Quality of Life commands like /bank, /sell, /auction, updated /help etc.");
             ErenshorQoLMod.AutoAttackToggle = ErenshorQoLMod.context.config("3 - Auto Attack", "Enable Auto Attack", ErenshorQoLMod.Toggle.On, "Enable automatically turning on auto-attack.");
             ErenshorQoLMod.AutoAttackOnSkillToggle = ErenshorQoLMod.context.config("3 - Auto Attack", "Auto Attack on Skill Use", ErenshorQoLMod.Toggle.On, "Automatically start attacking when a skill is used.");

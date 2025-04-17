@@ -17,7 +17,6 @@ using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 using System.Diagnostics;
 using System.Text;
-using static Unity.IO.LowLevel.Unsafe.AsyncReadManagerMetrics;
 
 namespace ErenshorQoL
 {
@@ -26,7 +25,7 @@ namespace ErenshorQoL
     public class ErenshorQoLMod : BaseUnityPlugin
     {
         internal const string ModName = "ErenshorQoLMod";
-        internal const string ModVersion = "1.2.24.1119"; //const so should be manually updated before release
+        internal const string ModVersion = "1.4.17.0942"; //const so should be manually updated before release
         internal const string ModTitle = "Erenshor Quality of Life Mods";
         internal const string ModDescription = "Erenshor Quality of Life Mods";
         internal const string Author = "Brumdail";
@@ -67,7 +66,7 @@ namespace ErenshorQoL
 
         private void Update()
         {
-            Config.Save();
+
         }
 
         private void SetupWatcher()
@@ -88,6 +87,12 @@ namespace ErenshorQoL
             {
                 //ErenshorQoLLogger.LogDebug("ReadConfigValues called");
                 Config.Reload();
+                Config.SaveOnConfigSet = true;
+
+                if (ErenshorQoLMod.AutoLootToBankToggle.Value == ErenshorQoLMod.Toggle.On)
+                {
+                    ErenshorQoLMod.AutoLootToBankToggle = ErenshorQoLMod.context.config("1 - AutoLoot", "Enable AutoLooting into the Bank", ErenshorQoLMod.Toggle.Off, "(not yet implemented) Enable automatic looting of items into your bank?");
+                }
             }
             catch
             {
