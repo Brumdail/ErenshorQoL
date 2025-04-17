@@ -1,7 +1,7 @@
 # ErenshorQoL
 Erenshor Quality of Life Modpack based on BepInEx
 
-## Version: 1.3.18
+## Version: 1.4.17
 
 ## Features (Configurable): /autoloot, /bank, /auction, /help, AutoSendPet, EnableAutoAttack, AutoPriceYourItem
 
@@ -119,6 +119,7 @@ Adds Postfix commands to PlayerCombat.ToggleAttack() to automatically perform ac
 - `/allgrps` - List group data.
 
 ### Changelog:
+- 2025-04-17 - Improved performance. Removed unused config option.
 - 2025-03-18 - Ensures Autoloot does not trigger if the player is dead. Removed extraneous debug logging. /autoloot config now includes a minimum value threshold.
 - 2024-09-20 - Performance rewrite of /autoloot. Fixed compatibility with other mods. Added AutoPriceYourItem.
 
