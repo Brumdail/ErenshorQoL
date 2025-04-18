@@ -105,6 +105,9 @@
 	<Reference Include="UnityEngine.AudioModule">
 		<HintPath>$(CorlibPath)\UnityEngine.AudioModule.dll</HintPath>
 	</Reference>
+	<Reference Include="UnityEngine.ParticleSystem">
+		<HintPath>$(CorlibPath)\UnityEngine.ParticleSystemModule.dll</HintPath>
+	</Reference>
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

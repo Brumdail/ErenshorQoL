@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.ParticleSystemJobs;
 using UnityEngine.Audio;
 using Unity;
 using BepInEx.Logging;
@@ -17,6 +18,8 @@ using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 using System.Diagnostics;
 using System.Text;
+using static Unity.IO.LowLevel.Unsafe.AsyncReadManagerMetrics;
+using System.Runtime.Serialization.Formatters;
 
 namespace ErenshorQoL
 {
@@ -25,7 +28,7 @@ namespace ErenshorQoL
     public class ErenshorQoLMod : BaseUnityPlugin
     {
         internal const string ModName = "ErenshorQoLMod";
-        internal const string ModVersion = "1.4.17.0942"; //const so should be manually updated before release
+        internal const string ModVersion = "1.4.18.0000"; //const so should be manually updated before release
         internal const string ModTitle = "Erenshor Quality of Life Mods";
         internal const string ModDescription = "Erenshor Quality of Life Mods";
         internal const string Author = "Brumdail";
@@ -89,10 +92,10 @@ namespace ErenshorQoL
                 Config.Reload();
                 Config.SaveOnConfigSet = true;
 
-                if (ErenshorQoLMod.AutoLootToBankToggle.Value == ErenshorQoLMod.Toggle.On)
-                {
-                    ErenshorQoLMod.AutoLootToBankToggle = ErenshorQoLMod.context.config("1 - AutoLoot", "Enable AutoLooting into the Bank", ErenshorQoLMod.Toggle.Off, "(not yet implemented) Enable automatic looting of items into your bank?");
-                }
+                //if (ErenshorQoLMod.AutoLootToBankToggle.Value == ErenshorQoLMod.Toggle.On)
+                //{
+                //    ErenshorQoLMod.AutoLootToBankToggle = ErenshorQoLMod.context.config("1 - AutoLoot", "Enable AutoLooting into the Bank", ErenshorQoLMod.Toggle.Off, "(not yet implemented) Enable automatic looting of items into your bank?");
+                //}
             }
             catch
             {
@@ -108,23 +111,25 @@ namespace ErenshorQoL
         internal static ConfigEntry<Toggle> AutoLootDebug = null!;
         internal static ConfigEntry<float> AutoLootDistance = null!;
         internal static ConfigEntry<int> AutoLootMinimum = null!;
-        internal static ConfigEntry<Toggle> AutoLootToBankToggle = null!;
+        //internal static ConfigEntry<Toggle> AutoLootToBankToggle = null!;
         internal static ConfigEntry<Toggle> QoLCommandsToggle = null!;
         internal static ConfigEntry<Toggle> AutoAttackToggle = null!;
         internal static ConfigEntry<Toggle> AutoAttackOnSkillToggle = null!;
-        internal static ConfigEntry<Toggle> AutoAttackOnSpellToggle = null!;
-        internal static ConfigEntry<Toggle> AutoAttackOnGroupAttackToggle = null!;
-        internal static ConfigEntry<Toggle> AutoAttackOnPetAttackToggle = null!;
+        internal static ConfigEntry<Toggle> AutoAttackOnAggro = null!;
+        //internal static ConfigEntry<Toggle> AutoAttackOnSpellToggle = null!;
+        //internal static ConfigEntry<Toggle> AutoAttackOnGroupAttackToggle = null!;
+        //internal static ConfigEntry<Toggle> AutoAttackOnPetAttackToggle = null!;
         internal static ConfigEntry<Toggle> AutoPetToggle = null!;
         internal static ConfigEntry<Toggle> AutoPetOnSkillToggle = null!;
-        internal static ConfigEntry<Toggle> AutoPetOnSpellToggle = null!;
-        internal static ConfigEntry<Toggle> AutoPetOnGroupAttackToggle = null!;
+        internal static ConfigEntry<Toggle> AutoPetOnAggro = null!;
+        //internal static ConfigEntry<Toggle> AutoPetOnSpellToggle = null!;
+        //internal static ConfigEntry<Toggle> AutoPetOnGroupAttackToggle = null!;
         internal static ConfigEntry<Toggle> AutoPetOnAutoAttackToggle = null!;
-        internal static ConfigEntry<Toggle> AutoGroupAttackToggle = null!;
-        internal static ConfigEntry<Toggle> AutoGroupAttackOnSkillToggle = null!;
-        internal static ConfigEntry<Toggle> AutoGroupAttackOnSpellToggle = null!;
-        internal static ConfigEntry<Toggle> AutoGroupAttackOnPetAttackToggle = null!;
-        internal static ConfigEntry<Toggle> AutoGroupAttackOnAutoAttackToggle = null!;
+        //internal static ConfigEntry<Toggle> AutoGroupAttackToggle = null!;
+        //internal static ConfigEntry<Toggle> AutoGroupAttackOnSkillToggle = null!;
+        //internal static ConfigEntry<Toggle> AutoGroupAttackOnSpellToggle = null!;
+        //internal static ConfigEntry<Toggle> AutoGroupAttackOnPetAttackToggle = null!;
+        //internal static ConfigEntry<Toggle> AutoGroupAttackOnAutoAttackToggle = null!;
         internal static ConfigEntry<Toggle> AutoPriceItem = null!;
         internal static bool _configApplied;
 
@@ -216,7 +221,7 @@ namespace ErenshorQoL
         }
         public class AutoAttack
         /// <summary>
-        /// Automatically sends the pet if it's not attacking your target
+        /// Automatically starts auto attack if it isn't on
         /// </summary>
         {
             public static void EnableAutoAttack(string activatedFrom)
@@ -283,7 +288,7 @@ namespace ErenshorQoL
         [HarmonyPatch("DoDeath")]
         [HarmonyPriority(50000)]
         [HarmonyAfter("Brumdail.ErenshorREL")]
-        class AutoLoot
+        public class AutoLoot
         {
             /// <summary>
             /// Attempts to find the latest nearby corpse to loot after each Character.DoDeath call
@@ -315,7 +320,7 @@ namespace ErenshorQoL
 
         [HarmonyPatch(typeof(TypeText))]
         [HarmonyPatch("CheckCommands")]
-        class QoLCommands
+        public class QoLCommands
         {
             /// <summary>
             /// Adds new /commands to the game: /bank, /vendor, /auction and updates /help to include gm commands
@@ -327,6 +332,7 @@ namespace ErenshorQoL
                 UpdateSocialLog.LogAdd("QoL Modded commands: ", "lightblue");
                 UpdateSocialLog.LogAdd("/autoloot - Toggles the feature to automatically Loot All items from the nearest corpse each time a creature dies.", "lightblue");
                 UpdateSocialLog.LogAdd("/bank - Opens the bank window", "lightblue");
+                UpdateSocialLog.LogAdd("/forge - Opens the forge (blacksmithing) window", "lightblue");
                 //UpdateSocialLog.LogAdd("/vendor - Sets target NPC to a vendor", "lightblue");
                 UpdateSocialLog.LogAdd("/auction - Opens the auction hall window", "lightblue");
                 UpdateSocialLog.LogAdd("/allscenes - Lists all scenes", "lightblue");
@@ -414,11 +420,12 @@ namespace ErenshorQoL
                 UpdateSocialLog.LogAdd("/yousolo - Removes SimPlayer from group", "orange");
                 UpdateSocialLog.LogAdd("/allgrps - List group data", "orange");
             }
-                static bool Prefix()
+            static bool Prefix()
             {
                 if (ErenshorQoLMod.QoLCommandsToggle.Value == Toggle.On)
                 {
                     bool bankEnabled = true;
+                    bool forgeEnabled = true;
                     bool vendorEnabled = false;
                     bool auctionEnabled = true;
                     bool allSceneEnabled = true;
@@ -457,7 +464,45 @@ namespace ErenshorQoL
                         bool bank = text == "/bank";
                         if (bank)
                         {
-                            GameData.BankUI.OpenBank(GameData.PlayerControl.transform.position);
+                            if (GameData.ItemOnCursor == null || GameData.ItemOnCursor == GameData.PlayerInv.Empty)
+                            {
+                                GameData.BankUI.OpenBank(GameData.PlayerControl.transform.position);
+                            }
+                            else
+                            {
+                                UpdateSocialLog.LogAdd("Remove item from cursor before interacting with a vendor.", "yellow");
+                            }
+                            GameData.TextInput.typed.text = "";
+                            GameData.TextInput.CDFrames = 10f;
+                            GameData.TextInput.InputBox.SetActive(false);
+                            GameData.PlayerTyping = false;
+                            return false;
+                        }
+                    }
+                    inputLengthCheck = GameData.TextInput.typed.text.Length >= 6;
+                    if ((inputLengthCheck) && (forgeEnabled))
+                    {
+                        string text = GameData.TextInput.typed.text.Substring(0, 6);
+                        text = text.ToLower();
+                        bool bank = text == "/forge";
+                        if (bank)
+                        {
+                            if (GameData.ItemOnCursor == null || GameData.ItemOnCursor == GameData.PlayerInv.Empty)
+                            {
+                                GameData.PlayerAud.PlayOneShot(GameData.Misc.SmithingOpen, GameData.PlayerAud.volume * GameData.SFXVol);
+                                GameData.Smithing.OpenWindow(GameData.PlayerControl.transform.position);
+
+                                //TODO: Can we instantiate a forge particle effect?
+                                // Spawn particle effects at player's position
+                                //GameData.Smithing.Success = raycastHit.transform.GetComponent<ForgeEffect>().Success;
+                                //ParticleSystem forgeParticles = Instantiate(forgeEffectPrefab, base.transform.position, Quaternion.identity);
+                                //forgeParticles.Play();
+
+                            }
+                            else
+                            {
+                                UpdateSocialLog.LogAdd("Remove item from cursor before interacting with a vendor.", "yellow");
+                            }
                             GameData.TextInput.typed.text = "";
                             GameData.TextInput.CDFrames = 10f;
                             GameData.TextInput.InputBox.SetActive(false);
@@ -525,7 +570,14 @@ namespace ErenshorQoL
                         bool auction = text == "/auction";
                         if (auction)
                         {
-                            GameData.AHUI.OpenAuctionHouse(GameData.PlayerControl.transform.position);
+                            if (GameData.ItemOnCursor == null || GameData.ItemOnCursor == GameData.PlayerInv.Empty)
+                            {
+                                GameData.AHUI.OpenAuctionHouse(GameData.PlayerControl.transform.position);
+                            }
+                            else
+                            {
+                                UpdateSocialLog.LogAdd("Remove item from cursor before interacting with a vendor.", "yellow");
+                            }
                             GameData.TextInput.typed.text = "";
                             GameData.TextInput.CDFrames = 10f;
                             GameData.TextInput.InputBox.SetActive(false);
@@ -585,7 +637,7 @@ namespace ErenshorQoL
                             string text = GameData.TextInput.typed.text.Substring(0, 10);
                             text = text.ToLower();
                             helpMods = text == "/help mods";
-                        }                        
+                        }
                         else if (GameData.TextInput.typed.text.Length >= 8)
                         {
                             string text = GameData.TextInput.typed.text.Substring(0, 8);
@@ -640,7 +692,7 @@ namespace ErenshorQoL
 
         [HarmonyPatch(typeof(UseSkill))]
         [HarmonyPatch("DoSkill")]
-        class AutoOnSkill
+        public class AutoOnSkill
         {
             /// <summary>
             /// Automatically turn on Auto-Attack or Automatically send your pet when you use an offensive skill
@@ -654,10 +706,6 @@ namespace ErenshorQoL
                 {
                     if (ErenshorQoLMod.AutoPetOnSkillToggle.Value == Toggle.On)
                     {
-                        //HELP - Severity	Code	Description	Project	File	Line	Suppression State	Details
-                        //Error(active)  CS0103 The name 'AutoPet' does not exist in the current context ErenshorQoL C: \Users\brumd\Documents\GitHub\ErenshorQoL\ErenshorQoL\ErenshorQoLMod.cs   468
-
-
                         AutoPet.AutoSendPet("Skill");
                     }
                 }
@@ -665,12 +713,52 @@ namespace ErenshorQoL
                 {
                     if (ErenshorQoLMod.AutoAttackOnSkillToggle.Value == Toggle.On)
                     {
-                        //HELP - Severity	Code	Description	Project	File	Line	Suppression State	Details
-                        //Error(active)  CS0103 The name 'AutoAttack' does not exist in the current context ErenshorQoL C: \Users\brumd\Documents\GitHub\ErenshorQoL\ErenshorQoL\ErenshorQoLMod.cs   472
                         AutoAttack.EnableAutoAttack("Skill");
                     }
                 }
 
+            }
+        }
+
+
+        [HarmonyPatch(typeof(NPC))]
+        [HarmonyPatch("AggroOn")]
+        public class AutoOnAggro
+        {
+            /// <summary>
+            /// Automatically turn on Auto-Attack or Automatically send your pet when your group aggros an enemy
+            /// </summary>
+
+            static void Postfix()
+            {
+                if ((ErenshorQoLMod.AutoPetToggle.Value == Toggle.On) || (ErenshorQoLMod.AutoAttackToggle.Value == Toggle.On))
+                {
+                    if (GameData.AttackingPlayer != null && GameData.AttackingPlayer.Count > 0 && GameData.PlayerControl.CurrentTarget == null)
+                    {
+                        NPC attackingNPC = GameData.AttackingPlayer.First();
+                        FieldInfo fieldInfo = AccessTools.Field(typeof(NPC), "Myself");
+                        Character attackingCharacter = (Character)fieldInfo.GetValue(attackingNPC);
+                        if ((attackingCharacter != null) && (attackingCharacter.Alive) && (GameData.PlayerControl.CurrentTarget == null))
+                        {
+                            attackingCharacter.TargetMe();
+                            GameData.PlayerControl.CurrentTarget = attackingCharacter;
+                        }
+                    }
+                }
+                if (ErenshorQoLMod.AutoPetToggle.Value == Toggle.On && GameData.PlayerControl.CurrentTarget != null)
+                {
+                    if (ErenshorQoLMod.AutoPetOnAggro.Value == Toggle.On)
+                    {
+                        AutoPet.AutoSendPet("Aggro");
+                    }
+                }
+                if (ErenshorQoLMod.AutoAttackToggle.Value == Toggle.On && GameData.PlayerControl.CurrentTarget != null)
+                {
+                    if (ErenshorQoLMod.AutoAttackOnAggro.Value == Toggle.On)
+                    {
+                        AutoAttack.EnableAutoAttack("Aggro");
+                    }
+                }
             }
         }
 
@@ -706,27 +794,24 @@ namespace ErenshorQoL
                     */
                 }
             }
-
         }
 
         [HarmonyPatch(typeof(AuctionHouseUI))]
         [HarmonyPatch("OpenListItem")]
-        class AutoPriceYourItem
+        public class AutoPriceYourItem
         {
             /// <summary>
             /// Automatically set the maximum gold value for an item that will sell
             /// </summary>
-
             static void Postfix(AuctionHouseUI __instance)
             {
                 if (ErenshorQoLMod.AutoPriceItem.Value == Toggle.On)
                 {
                     int maxAHPrice = 0;
-                    maxAHPrice = GameData.SlotToBeListed.MyItem.ItemValue * 6-1;
+                    maxAHPrice = GameData.SlotToBeListed.MyItem.ItemValue * 6 - 1;
                     GameData.AHUI.ListPrice.text = $"{maxAHPrice}";
                 }
             }
-
         }
 
         [HarmonyPatch(typeof(LootWindow))]
@@ -775,7 +860,7 @@ namespace ErenshorQoL
                                 {
                                     UpdateSocialLog.LogAdd("Looted Blessed Item: " + itemIcon.MyItem.ItemName + "!", "pink");
                                 }
-
+                                itemIcon.InformGroupOfLoot(itemIcon.MyItem);
                                 itemIcon.MyItem = GameData.PlayerInv.Empty;
                                 itemIcon.UpdateSlotImage();
                             }

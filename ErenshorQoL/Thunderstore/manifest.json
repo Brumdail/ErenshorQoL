@@ -1,8 +1,8 @@
 {
   "name": "ErenshorQoL",
-  "version_number": "1.4.17",
+  "version_number": "1.4.18",
   "website_url": "https://github.com/Brumdail/ErenshorQoL",
-  "description": "Erenshor Quality of Life Modpack based on BepInEx. Major features include: /autoloot, /bank, /auction, /help, AutoSendPet, EnableAutoAttackonSkill, AutoPriceYourItem",
+  "description": "Erenshor Quality of Life Modpack based on BepInEx. Major features include: /autoloot, /auction, /bank, /forge, /help, AutoSendPet, EnableAutoAttack, AutoPriceYourItem",
   "dependencies": [
     "BepInEx-BepInExPack-5.4.2100"
   ]

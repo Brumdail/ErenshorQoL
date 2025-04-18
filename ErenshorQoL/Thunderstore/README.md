@@ -1,15 +1,16 @@
 # ErenshorQoL
 Erenshor Quality of Life Modpack based on BepInEx
 
-## Version: 1.3.18
+## Version: 1.4.18
 
-## Features (Configurable): /autoloot, /bank, /auction, /help, AutoSendPet, EnableAutoAttack, AutoPriceYourItem
+## Features (Configurable): /autoloot, /auction, /bank, /forge, /help, AutoSendPet, EnableAutoAttack, AutoPriceYourItem
 
 ## How it works:
 
 - `/autoloot` - Toggles the feature to automatically Loot All items from the nearest corpse each time a creature dies.
-- `/bank` - Opens the bank window
 - `/auction` - Opens the auction hall window (Beta/full version only)
+- `/bank` - Opens the bank window
+- `/forge` - Opens the forge (blacksmithing) window
 - `/help` - Expanded list of commands including additional available player and GM commands
 - `Auto Send Pet` - If enabled, the pet will automatically be sent when you enable autoattack (*some parts of this feature still in progress*)
 - `Auto Enable Autoattack` - If enabled, AutoAttack will be turned on when you use a skill (*some parts of this feature still in progress*)
