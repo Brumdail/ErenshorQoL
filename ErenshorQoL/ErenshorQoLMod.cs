@@ -191,9 +191,12 @@ namespace ErenshorQoL
                 bool isAggressive = false;
                 if (hasTarget && petActive)
                 {
-                    //TODO - something like:
-                    //if (GameData.PlayerControl.CurrentTarget.MyFaction. < -200f)
-                    isAggressive = true;
+
+                    //ignore if already have a target or target is non-hostile or is a rock or invulnerable...
+                    if (GameData.PlayerControl.CurrentTarget != null && GameData.PlayerControl.CurrentTarget.AggressiveTowards.Contains(GameData.PlayerControl.Myself.MyFaction) && GameData.PlayerControl.CurrentTarget.MyFaction != Character.Faction.Mineral && GameData.PlayerControl.CurrentTarget.Invulnerable == false)
+                    {
+                        isAggressive = true;
+                    }
                 }
 
                 // GameData.PlayerControl.CurrentTarget.AggressiveTowards
@@ -230,7 +233,7 @@ namespace ErenshorQoL
 
                 if (autoAttackDebug) { UpdateSocialLog.LogAdd($"Auto-Attack On " + activatedFrom + " - GameData.Autoattacking is: {GameData.Autoattacking}", "lightblue"); }
 
-                if (GameData.Autoattacking == false)
+                if (GameData.PlayerControl.CurrentTarget != null && GameData.PlayerControl.CurrentTarget.AggressiveTowards.Contains(GameData.PlayerControl.Myself.MyFaction) && GameData.PlayerControl.CurrentTarget.MyFaction != Character.Faction.Mineral && GameData.PlayerControl.CurrentTarget.Invulnerable == false)
                 {
                     // Find the PlayerCombat component
                     PlayerCombat playerCombat = GameData.PlayerControl.Myself.GetComponent<PlayerCombat>();
@@ -250,6 +253,7 @@ namespace ErenshorQoL
                 }
             }
         }
+        /*
         public class AutoGroupCommand
         /// <summary>
         /// Automatically command the group to attack if they are not attacking your target
@@ -257,7 +261,6 @@ namespace ErenshorQoL
         {
             public static void AutoCommandAttack(string activatedFrom)
             {
-                /*
                     bool autoAttackDebug = false;
 
                     if (autoAttackDebug) { UpdateSocialLog.LogAdd($"Auto-Command Group From " + activatedFrom + " - GameData.Autoattacking is: {GameData.Autoattacking}", "lightblue"); }
@@ -280,9 +283,9 @@ namespace ErenshorQoL
                             if (autoAttackDebug) { UpdateSocialLog.LogAdd($"Activeated Auto-Attack On " + activatedFrom + " - GameData.Autoattacking is: {GameData.Autoattacking}", "orange"); }
                         }
                     }
-                */
             }
-        }
+        }*/
+
 
         [HarmonyPatch(typeof(Character))]
         [HarmonyPatch("DoDeath")]

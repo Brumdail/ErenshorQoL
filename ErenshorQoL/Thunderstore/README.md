@@ -1,7 +1,7 @@
 # ErenshorQoL
 Erenshor Quality of Life Modpack based on BepInEx
 
-## Version: 1.4.18
+## Version: 1.4.20
 
 ## Features (Configurable): /autoloot, /auction, /bank, /forge, /help, AutoSendPet, EnableAutoAttack, AutoPriceYourItem
 
@@ -12,8 +12,8 @@ Erenshor Quality of Life Modpack based on BepInEx
 - `/bank` - Opens the bank window
 - `/forge` - Opens the forge (blacksmithing) window
 - `/help` - Expanded list of commands including additional available player and GM commands
-- `Auto Send Pet` - If enabled, the pet will automatically be sent when you enable autoattack (*some parts of this feature still in progress*)
-- `Auto Enable Autoattack` - If enabled, AutoAttack will be turned on when you use a skill (*some parts of this feature still in progress*)
+- `Auto Send Pet` - If enabled, the pet will automatically be sent on triggers (Using certain skills, auto-attacking, or on aggro of hostile enemies)
+- `Auto Enable Autoattack` - If enabled, AutoAttack will be turned on automatically on triggers (Using certain skills, auto-attacking, or on aggro of hostile enemies)
 - `AutoPriceYourItem` - Automatically set the maximum gold value for an item that will sell
 
 ## How to Install: 
@@ -32,15 +32,19 @@ Toggle full features on or off as well as parts of features by editing the file.
 If there are issues, you can revert to default values.
 
 ## Technical Details
-Adds Postfix commands to find the nearest new corpse after the Character.DoDeath() call for Autoloot.
-Adds Prefix commands to TypeText.CheckCommands() to include new commands.
-Adds Prefix commands to UseSkill.DoSkill() to automatically perform actions when skills are used.
-Adds Postfix commands to PlayerCombat.ToggleAttack() to automatically perform actions when autoattack is enabled.
+Adds Postfix commands to `Character.DoDeath` to find the nearest new corpse after the call for Autoloot.
+Adds Prefix commands to `TypeText.CheckCommands` to include new commands.
+Adds Prefix commands to `UseSkill.DoSkill` to automatically perform actions when skills are used.
+Adds Postfix commands to `PlayerCombat.ToggleAttack` to automatically perform actions when autoattack is enabled.
+Adds Postfix commands to `NPC.AggroOn` to automatically perform actions when a new NPC aggros the player.
+Adds Postfix commands to `AuctionHouseUI.OpenListItem` to automatically add an item price.
+Adds Postfix commands to `LootWindow.LootAll` to enable item filtering.
 
 ### QoL Modded Commands:
 - `/autoloot` - Toggles the feature to automatically Loot All items from the nearest corpse each time a creature dies.
+- `/auction` - Opens the auction hall window
 - `/bank` - Opens the bank window.
-- `/auction` - Opens the auction hall window.
+- `/forge` - Opens the forge (blacksmithing) window
 - `/allscenes` - Lists all scenes.
 - `/help now allows for /help mods, /help gm, /help player, or /help other` for the full breakdown of available commands within the build;
 
@@ -120,6 +124,8 @@ Adds Postfix commands to PlayerCombat.ToggleAttack() to automatically perform ac
 - `/allgrps` - List group data.
 
 ### Changelog:
+- 2025-04-19 - AutoSendPet and AutoAttack will no longer activate on rocks or invulnerable NPCs.
+- 2025-04-18 - Added /forge command, added SendPetOnAggro, AttackOnAggro, and fixed some bugs. AutoSendPet and AutoAttack will only activate on hostile targets.
 - 2025-04-17 - Improved performance. Removed unused config option.
 - 2025-03-18 - Ensures Autoloot does not trigger if the player is dead. Removed extraneous debug logging. /autoloot config now includes a minimum value threshold.
 - 2024-09-20 - Performance rewrite of /autoloot. Fixed compatibility with other mods. Added AutoPriceYourItem.
