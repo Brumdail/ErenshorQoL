@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 using BepInEx.Configuration;
+using BepInEx.Logging;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,6 +11,8 @@ namespace ErenshorQoL
 {
     public class Utilities
     {
+        public static readonly ManualLogSource ErenshorUtilitiesLogger = BepInEx.Logging.Logger.CreateLogSource("ErenshorQoLUtilities");
+
         internal static void ApplyConfig()
         {
 
@@ -22,20 +25,20 @@ namespace ErenshorQoL
             ErenshorQoLMod.AutoLootDistance = ErenshorQoLMod.context.config("1 - AutoLoot", "Auto Loot Distance", 30f, "Distance to automatically loot items from defeated enemies. Acceptable Range <float> 5-10000");
             ErenshorQoLMod.AutoLootMinimum = ErenshorQoLMod.context.config("1 - AutoLoot", "Auto Loot Minimum Threshold", 0, "The minimum value of an item to automatically loot. Acceptable Range <int> 0-9999999");
             ErenshorQoLMod.AutoLootDebug = ErenshorQoLMod.context.config("1 - AutoLoot", "AutoLoot Debug Messages", ErenshorQoLMod.Toggle.Off, "Enable loot debug messages?");
-            //ErenshorQoLMod.AutoLootToBankToggle = ErenshorQoLMod.context.config("1 - AutoLoot", "Enable AutoLooting into the Bank", ErenshorQoLMod.Toggle.On, "(not yet implemented) Enable automatic looting of items into your bank?");
+            ErenshorQoLMod.AutoLootToBankToggle = ErenshorQoLMod.context.config("1 - AutoLoot", "Enable AutoLooting into the Bank", ErenshorQoLMod.Toggle.On, "(not yet implemented) Enable automatic looting of items into your bank?");
             ErenshorQoLMod.QoLCommandsToggle = ErenshorQoLMod.context.config("2 - QoL Commands", "Enable QoL Commands", ErenshorQoLMod.Toggle.On, "Enable additional Quality of Life commands like /bank, /sell, /auction, updated /help etc.");
-            ErenshorQoLMod.AutoAttackToggle = ErenshorQoLMod.context.config("3 - Auto Attack", "Enable Auto Attack", ErenshorQoLMod.Toggle.On, "Enable automatically turning on auto-attack.");
-            ErenshorQoLMod.AutoAttackOnSkillToggle = ErenshorQoLMod.context.config("3 - Auto Attack", "Auto Attack on Skill Use", ErenshorQoLMod.Toggle.On, "Automatically start attacking when a skill is used.");
-            ErenshorQoLMod.AutoAttackOnAggro = ErenshorQoLMod.context.config("3 - Auto Attack", "Auto Target,Attack on Aggro", ErenshorQoLMod.Toggle.On, "Automatically target and start attacking when the group gains aggro.");
+            ErenshorQoLMod.AutoAttackToggle = ErenshorQoLMod.context.config("3 - Auto Attack", "Enable Auto Attack", ErenshorQoLMod.Toggle.Off, "Enable automatically turning on auto-attack.");
+            ErenshorQoLMod.AutoAttackOnSkillToggle = ErenshorQoLMod.context.config("3 - Auto Attack", "Auto Attack on Skill Use", ErenshorQoLMod.Toggle.Off, "Automatically start attacking when a skill is used.");
+            ErenshorQoLMod.AutoAttackOnAggro = ErenshorQoLMod.context.config("3 - Auto Attack", "Auto Target,Attack on Aggro", ErenshorQoLMod.Toggle.Off, "Automatically target and start attacking when the group gains aggro.");
             //ErenshorQoLMod.AutoAttackOnSpellToggle = ErenshorQoLMod.context.config("3 - Auto Attack", "Auto Attack on Spell Cast", ErenshorQoLMod.Toggle.Off, "(not yet implemented) Automatically start attacking when a spell is cast.");
             //ErenshorQoLMod.AutoAttackOnGroupAttackToggle = ErenshorQoLMod.context.config("3 - Auto Attack", "Auto Attack on Group Attack Command", ErenshorQoLMod.Toggle.Off, "(not yet implemented) Automatically start attacking when a group attack command is issued.");
             //ErenshorQoLMod.AutoAttackOnPetAttackToggle = ErenshorQoLMod.context.config("3 - Auto Attack", "Auto Attack on Pet Attack Command", ErenshorQoLMod.Toggle.Off, "(not yet implemented) Automatically start attacking when a pet attack command is issued.");
-            ErenshorQoLMod.AutoPetToggle = ErenshorQoLMod.context.config("4 - Auto Pet", "Enable Auto Pet Command", ErenshorQoLMod.Toggle.On, "Enable automatically commanding the pet to attack.");
-            ErenshorQoLMod.AutoPetOnSkillToggle = ErenshorQoLMod.context.config("4 - Auto Pet", "Auto Pet Command on Skill Use", ErenshorQoLMod.Toggle.On, "Automatically command the pet to attack when a skill is used.");
-            ErenshorQoLMod.AutoPetOnAggro = ErenshorQoLMod.context.config("4 - Auto Pet", "Auto Pet Command on Skill Use", ErenshorQoLMod.Toggle.On, "Automatically command the pet to attack when the group gains aggro.");
-        //ErenshorQoLMod.AutoPetOnSpellToggle = ErenshorQoLMod.context.config("4 - Auto Pet", "Auto Pet Command on Spell Cast", ErenshorQoLMod.Toggle.Off, "(not yet implemented) Automatically command the pet to attack when a spell is cast.");
-        //ErenshorQoLMod.AutoPetOnGroupAttackToggle = ErenshorQoLMod.context.config("4 - Auto Pet", "Auto Pet Command on Group Attack", ErenshorQoLMod.Toggle.Off, "(not yet implemented) Automatically command the pet to attack when a group attack command is issued.");
-        ErenshorQoLMod.AutoPetOnAutoAttackToggle = ErenshorQoLMod.context.config("4 - Auto Pet", "Auto Pet Command on Auto Attack", ErenshorQoLMod.Toggle.On, "Automatically command the pet to attack when auto-attack is enabled.");
+            ErenshorQoLMod.AutoPetToggle = ErenshorQoLMod.context.config("4 - Auto Pet", "Enable Auto Pet Command", ErenshorQoLMod.Toggle.Off, "Enable automatically commanding the pet to attack.");
+            ErenshorQoLMod.AutoPetOnSkillToggle = ErenshorQoLMod.context.config("4 - Auto Pet", "Auto Pet Command on Skill Use", ErenshorQoLMod.Toggle.Off, "Automatically command the pet to attack when a skill is used.");
+            ErenshorQoLMod.AutoPetOnAggro = ErenshorQoLMod.context.config("4 - Auto Pet", "Auto Pet Command on Skill Use", ErenshorQoLMod.Toggle.Off, "Automatically command the pet to attack when the group gains aggro.");
+            //ErenshorQoLMod.AutoPetOnSpellToggle = ErenshorQoLMod.context.config("4 - Auto Pet", "Auto Pet Command on Spell Cast", ErenshorQoLMod.Toggle.Off, "(not yet implemented) Automatically command the pet to attack when a spell is cast.");
+            //ErenshorQoLMod.AutoPetOnGroupAttackToggle = ErenshorQoLMod.context.config("4 - Auto Pet", "Auto Pet Command on Group Attack", ErenshorQoLMod.Toggle.Off, "(not yet implemented) Automatically command the pet to attack when a group attack command is issued.");
+            ErenshorQoLMod.AutoPetOnAutoAttackToggle = ErenshorQoLMod.context.config("4 - Auto Pet", "Auto Pet Command on Auto Attack", ErenshorQoLMod.Toggle.On, "Automatically command the pet to attack when auto-attack is enabled.");
             //ErenshorQoLMod.AutoGroupAttackToggle = ErenshorQoLMod.context.config("5 - Auto Group Attack", "Enable Auto Group Attack Command", ErenshorQoLMod.Toggle.Off, "(not yet implemented) Enable automatically commanding the group to attack.");
             //ErenshorQoLMod.AutoGroupAttackOnSkillToggle = ErenshorQoLMod.context.config("5 - Auto Group Attack", "Auto Group Attack on Skill Use", ErenshorQoLMod.Toggle.Off, "(not yet implemented) Automatically command the group to attack when a skill is used.");
             //ErenshorQoLMod.AutoGroupAttackOnSpellToggle = ErenshorQoLMod.context.config("5 - Auto Group Attack", "Auto Group Attack on Spell Cast", ErenshorQoLMod.Toggle.Off, "(not yet implemented) Automatically command the group to attack when a spell is cast.");
@@ -44,6 +47,47 @@ namespace ErenshorQoL
             //ErenshorQoLMod.AutoRunToggle = ErenshorQoLMod.context.config("NA - Auto Run", "Enable Auto Run", ErenshorQoLMod.Toggle.Off, "(not yet implemented) Automatically run while enabled");
             //ErenshorQoLMod.AutoRunKey = ErenshorQoLMod.context.config("NA - Auto Run", "Auto Run Key", new KeyboardShortcut(KeyCode.Break), new ConfigDescription("Key(s) used to toggle Auto Run. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html", new ErenshorQoLMod.AcceptableShortcuts()));
             ErenshorQoLMod.AutoPriceItem = ErenshorQoLMod.context.config("6 - Auto Price Item", "Auto Set AH Item Price", ErenshorQoLMod.Toggle.On, "Automatically start with the highest sellable auction house price when adding an item.");
+
+            // Config definitions for obsolete settings
+            ConfigDefinition autoRunKeyDefinition = new ConfigDefinition("NA - Auto Run", "Auto Run Key");
+            ConfigDefinition autoRunToggleDefinition = new ConfigDefinition("NA - Auto Run", "Enable Auto Run");
+            ConfigDefinition autoLootToBankToggleDefinition = new ConfigDefinition("1 - AutoLoot", "Enable AutoLooting into the Bank");
+
+            if (ErenshorQoLMod.context.appliedConfigChange == false)
+            {
+                // Remove obsolete settings if they exist
+                if (ErenshorQoLMod.context.Config.ContainsKey(autoRunToggleDefinition))
+                {
+                    ErenshorQoLMod.context.Config.Remove(autoRunToggleDefinition);
+                    ErenshorUtilitiesLogger.LogInfo("Removed obsolete setting: 'Enable Auto Run'");
+                }
+
+                // Check if the obsolete key exists and remove it.
+                if (ErenshorQoLMod.context.Config.ContainsKey(autoRunKeyDefinition))
+                {
+                    ErenshorQoLMod.context.Config.Remove(autoRunKeyDefinition);
+                    ErenshorUtilitiesLogger.LogInfo("Removed obsolete setting: 'Auto Run Key'");
+                }
+
+                if (ErenshorQoLMod.context.Config.ContainsKey(autoLootToBankToggleDefinition))
+                {
+                    ErenshorQoLMod.context.Config.Remove(autoLootToBankToggleDefinition);
+                    ErenshorUtilitiesLogger.LogInfo("Removed obsolete setting: 'Enable AutoLooting into the Bank'");
+                }
+
+                //Disable AutoAttack and AutoSend Pet by default unless the user changes it back on manually.
+                if (ErenshorQoLMod.AutoAttackToggle.Value == ErenshorQoLMod.Toggle.On)
+                {
+                    ErenshorQoLMod.AutoAttackToggle.Value = ErenshorQoLMod.Toggle.Off;
+                }
+                if (ErenshorQoLMod.AutoPetToggle.Value == ErenshorQoLMod.Toggle.On)
+                {
+                    ErenshorQoLMod.AutoPetToggle.Value = ErenshorQoLMod.Toggle.Off;
+                }
+
+                //ensure the config change isn't repeated every time
+                ErenshorQoLMod.context.appliedConfigChange = true;
+            }
         }
     }
 }

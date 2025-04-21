@@ -35,6 +35,7 @@ namespace ErenshorQoL
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
         private static string ConfigFileFullPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
+        public bool appliedConfigChange = false; //used to check for options to change on each launch
         //internal static readonly int windowId = 777001; //will be used later for identifying the mod's window
         internal static ErenshorQoLMod context = null!;
 
@@ -92,10 +93,6 @@ namespace ErenshorQoL
                 Config.Reload();
                 Config.SaveOnConfigSet = true;
 
-                //if (ErenshorQoLMod.AutoLootToBankToggle.Value == ErenshorQoLMod.Toggle.On)
-                //{
-                //    ErenshorQoLMod.AutoLootToBankToggle = ErenshorQoLMod.context.config("1 - AutoLoot", "Enable AutoLooting into the Bank", ErenshorQoLMod.Toggle.Off, "(not yet implemented) Enable automatic looting of items into your bank?");
-                //}
             }
             catch
             {
@@ -111,7 +108,6 @@ namespace ErenshorQoL
         internal static ConfigEntry<Toggle> AutoLootDebug = null!;
         internal static ConfigEntry<float> AutoLootDistance = null!;
         internal static ConfigEntry<int> AutoLootMinimum = null!;
-        //internal static ConfigEntry<Toggle> AutoLootToBankToggle = null!;
         internal static ConfigEntry<Toggle> QoLCommandsToggle = null!;
         internal static ConfigEntry<Toggle> AutoAttackToggle = null!;
         internal static ConfigEntry<Toggle> AutoAttackOnSkillToggle = null!;
@@ -131,6 +127,10 @@ namespace ErenshorQoL
         //internal static ConfigEntry<Toggle> AutoGroupAttackOnPetAttackToggle = null!;
         //internal static ConfigEntry<Toggle> AutoGroupAttackOnAutoAttackToggle = null!;
         internal static ConfigEntry<Toggle> AutoPriceItem = null!;
+
+        //removed ConfigEntries:
+        internal static ConfigEntry<Toggle> AutoLootToBankToggle = null!;
+
         internal static bool _configApplied;
 
         internal ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description)
@@ -177,6 +177,7 @@ namespace ErenshorQoL
 
         #endregion
 
+        
         public class AutoPet
         /// <summary>
         /// Automatically sends the pet if it's not attacking your target
@@ -222,6 +223,8 @@ namespace ErenshorQoL
                 }
             }
         }
+
+        
         public class AutoAttack
         /// <summary>
         /// Automatically starts auto attack if it isn't on
@@ -253,6 +256,8 @@ namespace ErenshorQoL
                 }
             }
         }
+        
+
         /*
         public class AutoGroupCommand
         /// <summary>
