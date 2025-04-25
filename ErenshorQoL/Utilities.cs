@@ -49,26 +49,10 @@ namespace ErenshorQoL
             ErenshorQoLMod.AutoPriceItem = ErenshorQoLMod.context.config("6 - Auto Price Item", "Auto Set AH Item Price", ErenshorQoLMod.Toggle.On, "Automatically start with the highest sellable auction house price when adding an item.");
 
             // Config definitions for obsolete settings
-            ConfigDefinition autoRunKeyDefinition = new ConfigDefinition("NA - Auto Run", "Auto Run Key");
-            ConfigDefinition autoRunToggleDefinition = new ConfigDefinition("NA - Auto Run", "Enable Auto Run");
             ConfigDefinition autoLootToBankToggleDefinition = new ConfigDefinition("1 - AutoLoot", "Enable AutoLooting into the Bank");
 
             if (ErenshorQoLMod.context.appliedConfigChange == false)
             {
-                // Remove obsolete settings if they exist
-                if (ErenshorQoLMod.context.Config.ContainsKey(autoRunToggleDefinition))
-                {
-                    ErenshorQoLMod.context.Config.Remove(autoRunToggleDefinition);
-                    ErenshorUtilitiesLogger.LogInfo("Removed obsolete setting: 'Enable Auto Run'");
-                }
-
-                // Check if the obsolete key exists and remove it.
-                if (ErenshorQoLMod.context.Config.ContainsKey(autoRunKeyDefinition))
-                {
-                    ErenshorQoLMod.context.Config.Remove(autoRunKeyDefinition);
-                    ErenshorUtilitiesLogger.LogInfo("Removed obsolete setting: 'Auto Run Key'");
-                }
-
                 if (ErenshorQoLMod.context.Config.ContainsKey(autoLootToBankToggleDefinition))
                 {
                     ErenshorQoLMod.context.Config.Remove(autoLootToBankToggleDefinition);

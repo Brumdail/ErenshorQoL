@@ -1,7 +1,7 @@
 # ErenshorQoL
 Erenshor Quality of Life Modpack based on BepInEx
 
-## Version: 1.4.20
+## Version: 1.4.21
 
 ## Features (Configurable): /autoloot, /auction, /bank, /forge, /help, AutoSendPet, EnableAutoAttack, AutoPriceYourItem
 
@@ -124,6 +124,7 @@ Adds Postfix commands to `LootWindow.LootAll` to enable item filtering.
 - `/allgrps` - List group data.
 
 ### Changelog:
+- 2025-04-21 - Defaulting AutoSendPet and AutoAttack off when the mod loads due to conflicts with the game patch auto-attack changes. Removed unimplemented "Enable AutoLooting into the Bank" config option.
 - 2025-04-19 - AutoSendPet and AutoAttack will no longer activate on rocks or invulnerable NPCs.
 - 2025-04-18 - Added /forge command, added SendPetOnAggro, AttackOnAggro, and fixed some bugs. AutoSendPet and AutoAttack will only activate on hostile targets.
 - 2025-04-17 - Improved performance. Removed unused config option.
