@@ -1,29 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<!-- Generate Version Based on Date -->
-	<Target Name="AssemblyVersion" BeforeTargets="CoreCompile" DependsOnTargets="PrepareForBuild">
-		<PropertyGroup>
-			<AssemblyInfo>Properties\AssemblyInfo.cs</AssemblyInfo>
-			<AssemblyInfoContent>$([System.IO.File]::ReadAllText($(AssemblyInfo)))</AssemblyInfoContent>
-			<!--<VersionRegex>(\[\s*assembly\s*:\s*AssemblyVersion\(\s*"(\d+)\.(\d+)\.(\d+)(\.)(\d+)("\)\s*\]))</VersionRegex>-->
-			<FileVersionRegex>(\[\s*assembly\s*:\s*AssemblyFileVersion\(\s*"(\d+)\.(\d+)\.(\d+)(\.)(\d+)("\)\s*\]))</FileVersionRegex>
-
-			<NowTime>$([System.DateTime]::Now.Year)</NowTime>
-			<MajorVersion>$([MSBuild]::Subtract($(NowTime), 2024).ToString("0"))</MajorVersion>
-			<MinorBuildRevision>$([System.DateTime]::Now.ToString("M.d.hhm"))</MinorBuildRevision>
-
-			<!--<NewAssemblyVersion>[assembly: AssemblyVersion("$(MajorVersion).$(MinorBuildRevision)")]</NewAssemblyVersion>-->
-			<NewAssemblyFileVersion>[assembly: AssemblyFileVersion("$(MajorVersion).$(MinorBuildRevision)")]</NewAssemblyFileVersion>
-
-			<!-- Perform replacements in-memory -->
-			<!--<UpdatedContent>$([System.Text.RegularExpressions.Regex]::Replace($(AssemblyInfoContent), $(VersionRegex), $(NewAssemblyVersion)))</UpdatedContent>-->
-			<FinalContent>$([System.Text.RegularExpressions.Regex]::Replace($(AssemblyInfoContent), $(FileVersionRegex), $(NewAssemblyFileVersion)))</FinalContent>
-		</PropertyGroup>
-		
-		<!-- Write Final Content to AssemblyInfo.cs file -->
-		<WriteLinesToFile File="$(AssemblyInfo)" Lines="$(FinalContent)" Overwrite="true" />
-	</Target>
-
 	<!-- General project properties -->
 	<PropertyGroup>
 		<!-- Target framework for the project -->
@@ -39,13 +14,6 @@
 		<Company />
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
-
-	<!--<ItemGroup>
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="System.Linq" Version="4.3.0" />
-	</ItemGroup>-->
-
-
 
 	<Choose>
 		<When Condition="($(OS) == 'Unix' OR $(OS) == 'OSX') AND $(GamePath) == ''">

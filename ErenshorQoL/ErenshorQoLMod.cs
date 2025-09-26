@@ -28,7 +28,7 @@ namespace ErenshorQoL
     public class ErenshorQoLMod : BaseUnityPlugin
     {
         internal const string ModName = "ErenshorQoLMod";
-        internal const string ModVersion = "1.4.21.0000"; //const so should be manually updated before release
+        internal const string ModVersion = "1.9.23.0000"; //const so should be manually updated before release
         internal const string ModTitle = "Erenshor Quality of Life Mods";
         internal const string ModDescription = "Erenshor Quality of Life Mods";
         internal const string Author = "Brumdail";
@@ -42,12 +42,7 @@ namespace ErenshorQoL
         private readonly Harmony harmony = new Harmony(ModGUID);
 
         public static readonly ManualLogSource ErenshorQoLLogger = BepInEx.Logging.Logger.CreateLogSource(ModName);
-        private static string GetVersion()
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var versionAttribute = assembly.GetCustomAttribute<AssemblyVersionAttribute>();
-            return versionAttribute?.Version ?? "0.0.0.0";
-        }
+
 
         public enum Toggle
         {
@@ -291,7 +286,7 @@ namespace ErenshorQoL
             }
         }*/
 
-
+        /*
         [HarmonyPatch(typeof(Character))]
         [HarmonyPatch("DoDeath")]
         [HarmonyPriority(50000)]
@@ -325,20 +320,21 @@ namespace ErenshorQoL
                 }
             }
         }
+        */
 
         [HarmonyPatch(typeof(TypeText))]
         [HarmonyPatch("CheckCommands")]
         public class QoLCommands
         {
             /// <summary>
-            /// Adds new /commands to the game: /bank, /vendor, /auction and updates /help to include gm commands
+            /// Adds new /commands to the game: /bank, /vendor, /auction and /help to include gm commands
             /// </summary>
 
 
             static void HelpMods()
             {
                 UpdateSocialLog.LogAdd("QoL Modded commands: ", "lightblue");
-                UpdateSocialLog.LogAdd("/autoloot - Toggles the feature to automatically Loot All items from the nearest corpse each time a creature dies.", "lightblue");
+                //UpdateSocialLog.LogAdd("/autoloot - Toggles the feature to automatically Loot All items from the nearest corpse each time a creature dies.", "lightblue");
                 UpdateSocialLog.LogAdd("/bank - Opens the bank window", "lightblue");
                 UpdateSocialLog.LogAdd("/forge - Opens the forge (blacksmithing) window", "lightblue");
                 //UpdateSocialLog.LogAdd("/vendor - Sets target NPC to a vendor", "lightblue");
@@ -350,16 +346,19 @@ namespace ErenshorQoL
             {
                 UpdateSocialLog.LogAdd("\nPlayers commands:", "yellow");
                 UpdateSocialLog.LogAdd("/players - Get a list of players in zone", "yellow");
-                UpdateSocialLog.LogAdd("/time - Get the current game time", "yellow");
                 UpdateSocialLog.LogAdd("/whisper PlayerName Msg - Send a private message", "yellow");
                 UpdateSocialLog.LogAdd("/group - Send a message to your group (wait, attack, guard, etc)", "yellow");
                 UpdateSocialLog.LogAdd("/dance - boogie down.", "yellow");
                 UpdateSocialLog.LogAdd("/keyring - List held keys", "yellow");
+                UpdateSocialLog.LogAdd("/showmap - Toggle the Map", "yellow");
+                UpdateSocialLog.LogAdd("/ruleset - Display server modifiers", "yellow");
                 UpdateSocialLog.LogAdd("/all players || /all pla - List all players in Erenshor", "yellow");
                 UpdateSocialLog.LogAdd("/portsim SimName - Teleport specified SimPlayer to player", "yellow");
                 UpdateSocialLog.LogAdd("/shout - Message the entire zone", "yellow");
                 UpdateSocialLog.LogAdd("/friend - Target SimPlayer is a FRIEND of this character. Their progress will be loosely tied to this character's progress.", "yellow");
-                UpdateSocialLog.LogAdd("/time1, /time10, /time25, /time50 - Set TimeScale multiplier", "yellow");
+                UpdateSocialLog.LogAdd("/time1 - Set Day/Night Cycle to normal speed. ");
+                UpdateSocialLog.LogAdd("/time10, /time25, /time50 - Set TimeScale multiplier to 10x 25x or 50x speed.", "yellow");
+                UpdateSocialLog.LogAdd("/time - See what time it is. ");
                 UpdateSocialLog.LogAdd("/loc - Output player location X, Y, Z values", "yellow");
                 UpdateSocialLog.LogAdd("Hotkeys:", "yellow");
                 UpdateSocialLog.LogAdd("o - options", "yellow");
@@ -382,7 +381,7 @@ namespace ErenshorQoL
                 UpdateSocialLog.LogAdd("/blessit - Bless item on mouse cursor", "orange");
                 UpdateSocialLog.LogAdd("/additem 12 - (12: Cloth Sleeves) Add item to inventory; use /allitem or /item#00 to get item codes)", "orange");
                 UpdateSocialLog.LogAdd("/cheater 35 (level 1-35) - OVERWRITE character level and load random level-appropriate equipment (CAUTION: Current character equipment and level will be overwritten!!)", "red");
-                UpdateSocialLog.LogAdd("/loadset 35 (level 1-35) - Sets targetted SimPlayer to level and gear for level", "orange");
+                UpdateSocialLog.LogAdd("/loadset 35 (level 1-35) - Sets targetted SimPlayer to level and gear for level (CAUTION: Current character equipment and level will be overwritten!!)", "red");
                 UpdateSocialLog.LogAdd("/bedazzl - Targetted SimPlayer gets equipment randomly upgraded to sparkly", "orange");
                 UpdateSocialLog.LogAdd("/setnude - Targetted SimPlayer loses all equipment", "orange");
                 UpdateSocialLog.LogAdd("/hpscale 1.0 (multiplier) - NPC HP scale modifier. You must zone to activate this modifier", "orange");
@@ -399,12 +398,18 @@ namespace ErenshorQoL
                 UpdateSocialLog.LogAdd("/dosunny - Toggles sun", "orange");
                 UpdateSocialLog.LogAdd("/cantdie - Target stays at max HP", "orange");
                 UpdateSocialLog.LogAdd("/devkill - Kill current target", "orange");
+                UpdateSocialLog.LogAdd("/killall - Kill all spawned NPCs", "orange");
+                UpdateSocialLog.LogAdd("/add50xp - Add 50 xp to the player", "orange");
                 UpdateSocialLog.LogAdd("/debugxp - Add 1000 xp to the player", "orange");
+                UpdateSocialLog.LogAdd("/respec - Proficiency Points Reset", "orange");
+                UpdateSocialLog.LogAdd("/specs - List targetted SimPlayer's proficiency points", "orange");
+                UpdateSocialLog.LogAdd("/dospec - Targetted SimPlayer has proficiency points reset", "orange");
+                UpdateSocialLog.LogAdd("/addphse - Applies Cave Lung debuff to the player", "red");
+                UpdateSocialLog.LogAdd("/bombard - Applies a myriad of detrimental spells to the target.", "orange");
                 UpdateSocialLog.LogAdd("/invisme - Toggle Dev Invis", "orange");
-                UpdateSocialLog.LogAdd("/toscene Stowaway - Teleport to the named scene (may need to use Unstuck Me). Check scenes with /simlocs or use this list of Scenes: Abyssal, Azure, AzynthiClear, Blight, Bonepits, Brake, Braxonia, Braxonian, Duskenlight, Elderstone, FernallaField, Hidden, Krakengard, Loomingwood, Lost Cellar, Malaroth, PrielianPlateau, Ripper, Rockshade, Rottenfoot, SaltedStrand, Silkengrass, Soluna, Stowaway, Tutorial (Island Tomb), Underspine, Vitheo, Windwashed", "orange");
+                UpdateSocialLog.LogAdd("/toscene Stowaway - Teleport to the named scene (may need to use Unstuck Me). Check scenes with /simlocs or use this list of Scenes: Stowaway, Tutorial, Abyssal, Azure, AzynthiClear, Blight, Bonepits, Brake, Braxonia, Braxonian, Duskenlight, Elderstone, FernallaField, Hidden, Krakengard, Loomingwood, Lost Cellar, Malaroth, PrielPlateau, Ripper, Rockshade, Rottenfoot, SaltedStrand, Silkengrass, Soluna, Underspine, Vitheo, VitheosEnd, Willowwatch, Windwashed", "orange");
                 UpdateSocialLog.LogAdd("/invinci - Make player invincible", "orange");
                 UpdateSocialLog.LogAdd("/faction 5 - Modify player's faction standing of the target's faction. Use negative numbers to decrease faction.", "orange");
-
             }
             static void HelpOther()
             {
@@ -413,20 +418,27 @@ namespace ErenshorQoL
                 UpdateSocialLog.LogAdd("/resetec - Rest the total global economy to 0", "orange");
                 UpdateSocialLog.LogAdd("/stoprev - Set party to relaxed state or report who is in combat", "orange");
                 UpdateSocialLog.LogAdd("/gamepad - Gamepad Control Enabled (experimental)", "orange");
+                UpdateSocialLog.LogAdd("/control - Toggle between modern and standard controls", "orange");
                 UpdateSocialLog.LogAdd("/steamid - Lists which AppID and build is running)", "orange");
                 UpdateSocialLog.LogAdd("/gamerdr - NPC shouts about GamesRadar release date", "orange");
                 UpdateSocialLog.LogAdd("/testnre - Causes a Null Reference Exception for testing", "orange");
+                UpdateSocialLog.LogAdd("/force2h - Target SimPlayer forced to use two-handed weapon", "orange");
+                UpdateSocialLog.LogAdd("/ascview - View target SimPlayer ascensions", "orange");
                 UpdateSocialLog.LogAdd("/limit20, /limit30, /limit60 - Sets target frame rate", "orange");
                 UpdateSocialLog.LogAdd("/preview - Enable Demonstration Mode (CAUTION: Save Files will be overwritten!!)", "red");
                 UpdateSocialLog.LogAdd("/rocfest - Enable RocFest Demonstration Mode (CAUTION: Save Files will be overwritten!!)", "red");
-                UpdateSocialLog.LogAdd("/saveloc Output Save Data location", "orange");
+                UpdateSocialLog.LogAdd("/saveloc - Output Save Data location", "orange");
                 UpdateSocialLog.LogAdd("/droneme - Toggle Drone Mode for Camera (/droneme again to turn off)", "orange");
                 UpdateSocialLog.LogAdd("/debugap - List NPCs attacking the player", "orange");
                 UpdateSocialLog.LogAdd("/spychar - List information about the target", "orange");
                 UpdateSocialLog.LogAdd("/spyloot - List loot information about the target", "orange");
                 UpdateSocialLog.LogAdd("/nodechk - List Nodes in the current zone", "orange");
                 UpdateSocialLog.LogAdd("/yousolo - Removes SimPlayer from group", "orange");
+                UpdateSocialLog.LogAdd("/dismiss - Dismiss SimPlayer from group", "orange");
                 UpdateSocialLog.LogAdd("/allgrps - List group data", "orange");
+                UpdateSocialLog.LogAdd("/delachv - Clear Achievements", "red");
+                UpdateSocialLog.LogAdd("/bkquest - Load Back Quest Achievements", "orange");
+                
             }
             static bool Prefix()
             {
@@ -438,8 +450,10 @@ namespace ErenshorQoL
                     bool auctionEnabled = true;
                     bool allSceneEnabled = true;
                     bool helpGMEnabled = true;
-
                     bool inputLengthCheck = false;
+
+                    /*
+                     * Deprecated -- Check out LootManager https://thunderstore.io/c/erenshor/p/et508/Loot_Manager/ or https://github.com/et508/Erenshor.LootManager
                     inputLengthCheck = GameData.TextInput.typed.text.Length >= 9;
                     if (inputLengthCheck)
                     {
@@ -463,7 +477,7 @@ namespace ErenshorQoL
                             GameData.PlayerTyping = false;
                             return false;
                         }
-                    }
+                    }*/
                     inputLengthCheck = GameData.TextInput.typed.text.Length >= 5;
                     if ((inputLengthCheck) && (bankEnabled))
                     {
@@ -679,6 +693,7 @@ namespace ErenshorQoL
                             }
                             else if (help)
                             {
+                                GameData.Misc.OpenCloseHelp();
                                 HelpOther();
                                 HelpGM();
                                 HelpPlayer();
@@ -822,6 +837,7 @@ namespace ErenshorQoL
             }
         }
 
+        /*
         [HarmonyPatch(typeof(LootWindow))]
         [HarmonyPatch("LootAll")]
         public static class LootWindowPatch
@@ -890,6 +906,6 @@ namespace ErenshorQoL
                 __instance.CloseWindow();
                 return false; // Skip the original method
             }
-        }
+        }*/
     }
 }
