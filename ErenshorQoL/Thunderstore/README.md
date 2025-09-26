@@ -1,13 +1,12 @@
 # ErenshorQoL
 Erenshor Quality of Life Modpack based on BepInEx
 
-## Version: 1.4.21
+## Version: 1.9.25
 
-## Features (Configurable): /autoloot, /auction, /bank, /forge, /help, AutoSendPet, EnableAutoAttack, AutoPriceYourItem
+## Features (Configurable): /auction, /bank, /forge, /help, AutoSendPet, EnableAutoAttack, AutoPriceYourItem
 
 ## How it works:
 
-- `/autoloot` - Toggles the feature to automatically Loot All items from the nearest corpse each time a creature dies.
 - `/auction` - Opens the auction hall window (Beta/full version only)
 - `/bank` - Opens the bank window
 - `/forge` - Opens the forge (blacksmithing) window
@@ -15,6 +14,7 @@ Erenshor Quality of Life Modpack based on BepInEx
 - `Auto Send Pet` - If enabled, the pet will automatically be sent on triggers (Using certain skills, auto-attacking, or on aggro of hostile enemies)
 - `Auto Enable Autoattack` - If enabled, AutoAttack will be turned on automatically on triggers (Using certain skills, auto-attacking, or on aggro of hostile enemies)
 - `AutoPriceYourItem` - Automatically set the maximum gold value for an item that will sell
+- `/autoloot` - DEPRECATED. Check out https://thunderstore.io/c/erenshor/p/et508/Loot_Manager/ for a great implementation
 
 ## How to Install: 
 
@@ -32,16 +32,12 @@ Toggle full features on or off as well as parts of features by editing the file.
 If there are issues, you can revert to default values.
 
 ## Technical Details
-Adds Postfix commands to `Character.DoDeath` to find the nearest new corpse after the call for Autoloot.
 Adds Prefix commands to `TypeText.CheckCommands` to include new commands.
-Adds Prefix commands to `UseSkill.DoSkill` to automatically perform actions when skills are used.
 Adds Postfix commands to `PlayerCombat.ToggleAttack` to automatically perform actions when autoattack is enabled.
 Adds Postfix commands to `NPC.AggroOn` to automatically perform actions when a new NPC aggros the player.
 Adds Postfix commands to `AuctionHouseUI.OpenListItem` to automatically add an item price.
-Adds Postfix commands to `LootWindow.LootAll` to enable item filtering.
 
 ### QoL Modded Commands:
-- `/autoloot` - Toggles the feature to automatically Loot All items from the nearest corpse each time a creature dies.
 - `/auction` - Opens the auction hall window
 - `/bank` - Opens the bank window.
 - `/forge` - Opens the forge (blacksmithing) window
@@ -50,16 +46,19 @@ Adds Postfix commands to `LootWindow.LootAll` to enable item filtering.
 
 ### Player Commands:
 - `/players` - Get a list of players in zone.
-- `/time` - Get the current game time.
 - `/whisper PlayerName Msg` - Send a private message.
 - `/group` - Send a message to your group (wait, attack, guard, etc).
 - `/dance` - Boogie down.
 - `/keyring` - List held keys.
+- `/showmap` - Toggle the Map
+- `/ruleset` - Display server modifiers
 - `/all players || /all pla` - List all players in Erenshor.
 - `/portsim SimName` - Teleport specified SimPlayer to player.
 - `/shout` - Message the entire zone.
 - `/friend` - Target SimPlayer is a FRIEND of this character. Their progress will be loosely tied to this character's progress.
-- `/time1, /time10, /time25, /time50` - Set TimeScale multiplier.
+- `/time1` - Set Day/Night Cycle to normal speed.
+- `/time10, /time25, /time50` - Set TimeScale multiplier to 10x 25x or 50x speed.
+- `/time` - See what time it is.
 - `/loc` - Output player location X, Y, Z values.
 
 #### Hotkeys:
@@ -80,7 +79,7 @@ Adds Postfix commands to `LootWindow.LootAll` to enable item filtering.
 - `/blessit` - Bless item on mouse cursor.
 - `/additem 12` - (12: Cloth Sleeves) Add item to inventory; use `/allitem` or `/item#00` to get item codes.
 - `/cheater 35 (level 1-35)` - **OVERWRITE character level and load random level-appropriate equipment (CAUTION: Current character equipment and level will be overwritten!!)**.
-- `/loadset 35 (level 1-35)` - Sets targeted SimPlayer to level and gear for level.
+- `/loadset 35 (level 1-35)` - Sets targeted SimPlayer to level and gear for level. (CAUTION: Current character equipment and level will be overwritten!!)
 - `/bedazzl` - Targeted SimPlayer gets equipment randomly upgraded to sparkly.
 - `/setnude` - Targeted SimPlayer loses all equipment.
 - `/hpscale 1.0 (multiplier)` - NPC HP scale modifier. You must zone to activate this modifier.
@@ -97,9 +96,17 @@ Adds Postfix commands to `LootWindow.LootAll` to enable item filtering.
 - `/dosunny` - Toggles sun.
 - `/cantdie` - Target stays at max HP.
 - `/devkill` - Kill current target.
-- `/debugxp` - Add 1000 XP to the player.
+- `/killall` - Kill all spawned NPCs.
+- `/add50xp` - Add 50 xp to the player.
+- `/debugxp` - Add 1000 xp to the player.
+- `/respec` - Proficiency Points Reset.
+- `/specs` - List targeted SimPlayer's proficiency points.
+- `/dospec` - Targeted SimPlayer has proficiency points reset.
+- `/addphse` - Applies Cave Lung debuff to the player.
+- `/bombard` - Applies a myriad of detrimental spells to the target.
 - `/invisme` - Toggle Dev Invis.
-- `/toscene Stowaway` - Teleport to the named scene. Check scenes with `/simlocs` or use the listed scenes.
+- `/toscene Stowaway` - Teleport to the named scene. Check scenes with `/simlocs` or `/allscenes` or use the listed scenes:
+  `Stowaway`, `Tutorial`, `Abyssal`, `Azure`, `AzynthiClear`, `Blight`, `Bonepits`, `Brake`, `Braxonia`, `Braxonian`, `Duskenlight`, `Elderstone`, `FernallaField`, `Hidden`, `Krakengard`, `Loomingwood`, `Lost Cellar`, `Malaroth`, `PrielPlateau`, `Ripper`, `Rockshade`, `Rottenfoot`, `SaltedStrand`, `Silkengrass`, `Soluna`, `Underspine`, `Vitheo`, `VitheosEnd`, `Willowwatch`, `Windwashed`
 - `/invinci` - Make player invincible.
 - `/faction 5` - Modify player's faction standing of the target's faction. Use negative numbers to decrease faction.
 
@@ -108,9 +115,12 @@ Adds Postfix commands to `LootWindow.LootAll` to enable item filtering.
 - `/resetec` - Reset the total global economy to 0.
 - `/stoprev` - Set party to relaxed state or report who is in combat.
 - `/gamepad` - Enable gamepad control (experimental).
+- `/control` - Toggle between modern and standard controls.
 - `/steamid` - Lists which AppID and build is running.
 - `/gamerdr` - NPC shouts about GamesRadar release date.
 - `/testnre` - Causes a Null Reference Exception for testing.
+- `/force2h` - Target SimPlayer forced to use two-handed weapon.
+- `/ascview` - View target SimPlayer ascensions.
 - `/limit20, /limit30, /limit60` - Sets target frame rate.
 - `/preview` - **Enable Demonstration Mode (CAUTION: Save Files will be overwritten!!)**.
 - `/rocfest` - **Enable RocFest Demonstration Mode (CAUTION: Save Files will be overwritten!!)**.
@@ -121,9 +131,13 @@ Adds Postfix commands to `LootWindow.LootAll` to enable item filtering.
 - `/spyloot` - List loot information about the target.
 - `/nodechk` - List Nodes in the current zone.
 - `/yousolo` - Removes SimPlayer from group.
+- `/dismiss` - Dismiss SimPlayer from group.
 - `/allgrps` - List group data.
+- `/delachv` - **CAUTION** Clear All Achievements. 
+- `/bkquest` - Load Back Quest Achievements.
 
 ### Changelog:
+- 2025-09-25 - Updated with 0.2 game version fixes. Removed AutoLoot feature (broken and superseded by ET508's LootManager). Fixed /help to open the new Help menu and also added the list of the new debug commands in the latest build
 - 2025-04-21 - Defaulting AutoSendPet and AutoAttack off when the mod loads due to conflicts with the game patch auto-attack changes. Removed unimplemented "Enable AutoLooting into the Bank" config option.
 - 2025-04-19 - AutoSendPet and AutoAttack will no longer activate on rocks or invulnerable NPCs.
 - 2025-04-18 - Added /forge command, added SendPetOnAggro, AttackOnAggro, and fixed some bugs. AutoSendPet and AutoAttack will only activate on hostile targets.
