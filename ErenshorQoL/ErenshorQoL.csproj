@@ -76,6 +76,9 @@
 	<Reference Include="UnityEngine.ParticleSystem">
 		<HintPath>$(CorlibPath)\UnityEngine.ParticleSystemModule.dll</HintPath>
 	</Reference>
+	<Reference Include="UnityEngine.InputLegacyModule">
+		<HintPath>$(CorlibPath)\UnityEngine.InputLegacyModule.dll</HintPath>
+	</Reference>
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
