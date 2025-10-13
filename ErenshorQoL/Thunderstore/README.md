@@ -1,7 +1,7 @@
 # ErenshorQoL
 Erenshor Quality of Life Modpack based on BepInEx
 
-## Version: 1.10.13
+## Version: 1.10.14
 
 ## Features (Configurable): /auction, /bank, /forge, /help, AutoSendPet, EnableAutoAttack, AutoPriceYourItem
 
@@ -14,8 +14,8 @@ Cleaned up deprecated code and verified with Halloween Event. Added Configurable
 - `/bank` - Opens the bank window
 - `/forge` - Opens the forge (blacksmithing) window
 - `/help` - Expanded list of commands including additional available player and GM commands
-- `Auto Send Pet` - If enabled, the pet will automatically be sent on triggers (Using certain skills, auto-attacking, or on aggro of hostile enemies)
-- `Auto Enable Autoattack` - If enabled, AutoAttack will be turned on automatically on triggers (Using certain skills, auto-attacking, or on aggro of hostile enemies)
+- `Auto Send Pet` - DEPRECATED. The current game build has a toggle to auto assist the group.
+- `Auto Enable Autoattack` - DEPRECATED. The current game build will enable autoattack on hostile actions.
 - `AutoPriceYourItem` - Automatically set the maximum gold value for an item that will sell
 - `/autoloot` - DEPRECATED. Check out https://thunderstore.io/c/erenshor/p/et508/Loot_Manager/ for a great implementation
 
@@ -36,8 +36,6 @@ If there are issues, you can revert to default values.
 
 ## Technical Details
 Adds Prefix commands to `TypeText.CheckCommands` to include new commands.
-Adds Postfix commands to `PlayerCombat.ToggleAttack` to automatically perform actions when autoattack is enabled.
-Adds Postfix commands to `NPC.AggroOn` to automatically perform actions when a new NPC aggros the player.
 Adds Postfix commands to `AuctionHouseUI.OpenListItem` to automatically add an item price.
 
 ### QoL Modded Commands:
