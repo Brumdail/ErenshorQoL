@@ -1,12 +1,12 @@
 # ErenshorQoL
 Erenshor Quality of Life Modpack based on BepInEx
 
-## Version: 1.10.13
+## Version: 2.2.11
 
 ## Features (Configurable): /auction, /bank, /forge, /help, AutoSendPet, EnableAutoAttack, AutoPriceYourItem
 
 ## Latest Changes:
-Cleaned up deprecated code and verified with Halloween Event. Added Configurable KeyBinds for Bank, Auction, and Forge commands.
+Refactored chat command parsing to correct bug causing chat lines to disappear. Tested with 0.3 game version and verified all features working as intended.
 
 ## How it works:
 
@@ -141,6 +141,7 @@ Adds Postfix commands to `AuctionHouseUI.OpenListItem` to automatically add an i
 - `/bkquest` - Load Back Quest Achievements.
 
 ### Changelog:
+- 2026-02-11 - Refactored chat command parsing to correct bug causing chat lines to disappear. Tested with 0.3 game version and verified all features working as intended.
 - 2025-10-13 - Cleaned up deprecated code and verified with Halloween Event. Added Configurable KeyBinds for Bank, Auction, and Forge commands.
 - 2025-09-25 - Updated with 0.2 game version fixes. Removed AutoLoot feature (broken and superseded by ET508's LootManager). Fixed /help to open the new Help menu and also added the list of the new debug commands in the latest build.
 - 2025-04-21 - Defaulting AutoSendPet and AutoAttack off when the mod loads due to conflicts with the game patch auto-attack changes. Removed unimplemented "Enable AutoLooting into the Bank" config option.

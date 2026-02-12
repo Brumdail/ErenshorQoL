@@ -11,7 +11,7 @@ echo -------------- Build started at %date% %time% in %CD% -------------- >> ".\
 set ModName=ErenshorQoL
 set TargetDir=.\bin\Release\netstandard2.1
 echo Targeted DLL: %TargetDir%\%ModName%.dll  >> ".\log\Post-build.log"
-set ModTestLocation=%USERPROFILE%\AppData\Roaming\Thunderstore Mod Manager\DataFolder\Erenshor\profiles\Test1\BepInEx\plugins\Brumdail-%ModName%
+set ModTestLocation=%USERPROFILE%\AppData\Roaming\Thunderstore Mod Manager\DataFolder\Erenshor\profiles\Default\BepInEx\plugins\Brumdail-%ModName%
 echo ModTestLocation=%ModTestLocation% >> ".\log\Post-build.log"
 
 :: Copy the DLL to the current directory and log the output
@@ -44,7 +44,7 @@ if %errorlevel% neq 0 (
 
 :: Copy the LICENSE.txt to the Thunderstore directory and log the output
 echo Copy the LICENSE.txt to the Thunderstore directory and log the output >> ".\log\Post-build.log"
-xcopy /y "%USERPROFILE%\Documents\GitHub\%ModName%\LICENSE.txt" ".\Thunderstore" /d >> ".\log\Post-build.log"
+xcopy /y "..\LICENSE.txt" ".\Thunderstore" /d >> ".\log\Post-build.log"
 if %errorlevel% neq 0 (
     echo !!! ---Error--- !!! %errorlevel% during copying LICENSE.txt to Thunderstore directory >> ".\log\Post-build.log"
     exit /b %errorlevel%
