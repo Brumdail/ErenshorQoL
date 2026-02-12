@@ -1,12 +1,12 @@
 # ErenshorQoL
 Erenshor Quality of Life Modpack based on BepInEx
 
-## Version: 1.10.14
+## Version: 2.2.11
 
 ## Features (Configurable): /auction, /bank, /forge, /help, AutoSendPet, EnableAutoAttack, AutoPriceYourItem
 
 ## Latest Changes:
-Cleaned up deprecated code and verified with Halloween Event. Added Configurable KeyBinds for Bank, Auction, and Forge commands.
+Refactored chat command parsing to correct bug causing chat lines to disappear. Tested with 0.3 game version and verified all features working as intended.
 
 ## How it works:
 
@@ -14,8 +14,8 @@ Cleaned up deprecated code and verified with Halloween Event. Added Configurable
 - `/bank` - Opens the bank window
 - `/forge` - Opens the forge (blacksmithing) window
 - `/help` - Expanded list of commands including additional available player and GM commands
-- `Auto Send Pet` - DEPRECATED. The current game build has a toggle to auto assist the group.
-- `Auto Enable Autoattack` - DEPRECATED. The current game build will enable autoattack on hostile actions.
+- `Auto Send Pet` - If enabled, the pet will automatically be sent on triggers (Using certain skills, auto-attacking, or on aggro of hostile enemies)
+- `Auto Enable Autoattack` - If enabled, AutoAttack will be turned on automatically on triggers (Using certain skills, auto-attacking, or on aggro of hostile enemies)
 - `AutoPriceYourItem` - Automatically set the maximum gold value for an item that will sell
 - `/autoloot` - DEPRECATED. Check out https://thunderstore.io/c/erenshor/p/et508/Loot_Manager/ for a great implementation
 
@@ -36,6 +36,8 @@ If there are issues, you can revert to default values.
 
 ## Technical Details
 Adds Prefix commands to `TypeText.CheckCommands` to include new commands.
+Adds Postfix commands to `PlayerCombat.ToggleAttack` to automatically perform actions when autoattack is enabled.
+Adds Postfix commands to `NPC.AggroOn` to automatically perform actions when a new NPC aggros the player.
 Adds Postfix commands to `AuctionHouseUI.OpenListItem` to automatically add an item price.
 
 ### QoL Modded Commands:
@@ -139,6 +141,7 @@ Adds Postfix commands to `AuctionHouseUI.OpenListItem` to automatically add an i
 - `/bkquest` - Load Back Quest Achievements.
 
 ### Changelog:
+- 2026-02-11 - Refactored chat command parsing to correct bug causing chat lines to disappear. Tested with 0.3 game version and verified all features working as intended.
 - 2025-10-13 - Cleaned up deprecated code and verified with Halloween Event. Added Configurable KeyBinds for Bank, Auction, and Forge commands.
 - 2025-09-25 - Updated with 0.2 game version fixes. Removed AutoLoot feature (broken and superseded by ET508's LootManager). Fixed /help to open the new Help menu and also added the list of the new debug commands in the latest build.
 - 2025-04-21 - Defaulting AutoSendPet and AutoAttack off when the mod loads due to conflicts with the game patch auto-attack changes. Removed unimplemented "Enable AutoLooting into the Bank" config option.

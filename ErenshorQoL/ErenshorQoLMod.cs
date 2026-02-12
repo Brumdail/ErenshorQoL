@@ -28,7 +28,7 @@ namespace ErenshorQoL
     public class ErenshorQoLMod : BaseUnityPlugin
     {
         internal const string ModName = "ErenshorQoLMod";
-        internal const string ModVersion = "1.10.14.0000"; //const so should be manually updated before release
+        internal const string ModVersion = "2.2.11.0000"; //const so should be manually updated before release
         internal const string ModTitle = "Erenshor Quality of Life Mods";
         internal const string ModDescription = "Erenshor Quality of Life Mods";
         internal const string Author = "Brumdail";
@@ -163,16 +163,18 @@ namespace ErenshorQoL
             /// Adds new /commands to the game: /bank, /vendor, /auction and /help to include gm commands
             /// </summary>
 
-
             static void HelpMods()
             {
+                if (ErenshorQoLMod.QoLCommandsToggle.Value == Toggle.Off)
+                {
+                    return;
+                }
                 UpdateSocialLog.LogAdd("QoL Modded commands: ", "lightblue");
                 UpdateSocialLog.LogAdd("/bank - Opens the bank window", "lightblue");
                 UpdateSocialLog.LogAdd("/forge - Opens the forge (blacksmithing) window", "lightblue");
                 UpdateSocialLog.LogAdd("/auction - Opens the auction hall window", "lightblue");
                 UpdateSocialLog.LogAdd("/allscenes - Lists all scenes", "lightblue");
             }
-
             static void HelpPlayer()
             {
                 UpdateSocialLog.LogAdd("\nPlayers commands:", "yellow");
@@ -203,9 +205,12 @@ namespace ErenshorQoL
                 UpdateSocialLog.LogAdd("spacebar - jump", "yellow");
                 UpdateSocialLog.LogAdd("escape (hold) - exit to menu", "yellow");
             }
-
             static void HelpGM()
             {
+                if (ErenshorQoLMod.QoLCommandsToggle.Value == Toggle.Off)
+                {
+                    return;
+                }
                 UpdateSocialLog.LogAdd("\nGM commands: *not available in the demo build", "orange");
                 UpdateSocialLog.LogAdd("/iamadev - Enable Dev Controls", "orange");
                 UpdateSocialLog.LogAdd("/allitem - List all items", "orange");
@@ -284,6 +289,10 @@ namespace ErenshorQoL
             }
             public static void DoBank()
             {
+                if (ErenshorQoLMod.QoLCommandsToggle.Value == Toggle.Off)
+                {
+                    return;
+                }
                 if (GameData.ItemOnCursor == null || GameData.ItemOnCursor == GameData.PlayerInv.Empty)
                 {
                     GameData.BankUI.OpenBank(GameData.PlayerControl.transform.position);
@@ -295,6 +304,10 @@ namespace ErenshorQoL
             }
             public static void DoAuction()
             {
+                if (ErenshorQoLMod.QoLCommandsToggle.Value == Toggle.Off)
+                {
+                    return;
+                }
                 if (GameData.ItemOnCursor == null || GameData.ItemOnCursor == GameData.PlayerInv.Empty)
                 {
                     GameData.AHUI.OpenAuctionHouse(GameData.PlayerControl.transform.position);
@@ -306,6 +319,7 @@ namespace ErenshorQoL
             }
             public static void DoForge()
             {
+                if (ErenshorQoLMod.QoLCommandsToggle.Value == Toggle.Off) {return;}
                 if (GameData.ItemOnCursor == null || GameData.ItemOnCursor == GameData.PlayerInv.Empty)
                 {
                     GameData.PlayerAud.PlayOneShot(GameData.Misc.SmithingOpen, GameData.PlayerAud.volume * GameData.SFXVol);
@@ -316,168 +330,73 @@ namespace ErenshorQoL
                     UpdateSocialLog.LogAdd("Remove item from cursor before interacting with the forge.", "yellow");
                 }
             }
-
-            static bool Prefix()
+            public static void DoAllScenes()
             {
-                if (ErenshorQoLMod.QoLCommandsToggle.Value == Toggle.On)
+                if (ErenshorQoLMod.QoLCommandsToggle.Value == Toggle.Off)
                 {
-                    bool bankEnabled = true;
-                    bool forgeEnabled = true;
-                    bool auctionEnabled = true;
-                    bool allSceneEnabled = true;
-                    bool helpGMEnabled = true;
-                    bool inputLengthCheck;
+                    return;
+                }
+                StringBuilder zoneNamesBuilder = new StringBuilder("Stowaway, Tutorial");
 
-                    /*
-                     * /autoloot Deprecated -- Check out LootManager https://thunderstore.io/c/erenshor/p/et508/Loot_Manager/ or https://github.com/et508/Erenshor.LootManager
-                    */
-                    inputLengthCheck = GameData.TextInput.typed.text.Length >= 5;
-                    if ((inputLengthCheck) && (bankEnabled))
+                foreach (ZoneAtlasEntry zoneAtlasEntry in ZoneAtlas.Atlas)
+                {
+                    zoneNamesBuilder.Append(", " + zoneAtlasEntry.ZoneName);
+                }
+
+                string zoneNames = zoneNamesBuilder.ToString();
+                UpdateSocialLog.LogAdd("Zone Names: " + zoneNames);
+            }
+            public static bool Prefix(TypeText __instance)
+            {
+                string txt = __instance.typed.text;
+                if (string.IsNullOrEmpty(txt)) return true;
+
+                if (txt.StartsWith("/"))
+                {
+                    string[] spl = txt.Substring(1).Split(' ');
+                    string command = spl[0].ToLower();
+                    string arg = spl.Length > 1 ? spl[1].ToLower() : string.Empty;
+
+                    switch (command)
                     {
-                        string text = GameData.TextInput.typed.text.Substring(0, 5);
-                        text = text.ToLower();
-                        bool bank = text == "/bank";
-                        if (bank)
-                        {
-                            ErenshorQoL.ErenshorQoLMod.QoLCommands.DoBank();
-                            GameData.TextInput.typed.text = "";
-                            GameData.TextInput.CDFrames = 10f;
-                            GameData.TextInput.InputBox.SetActive(false);
-                            GameData.PlayerTyping = false;
+                        case "bank":
+                            QoLCommands.DoBank();
                             return false;
-                        }
-                    }
-                    inputLengthCheck = GameData.TextInput.typed.text.Length >= 6;
-                    if ((inputLengthCheck) && (forgeEnabled))
-                    {
-                        string text = GameData.TextInput.typed.text.Substring(0, 6);
-                        text = text.ToLower();
-                        bool forge = text == "/forge";
-                        if (forge)
-                        {
-                            ErenshorQoL.ErenshorQoLMod.QoLCommands.DoForge();
-                            GameData.TextInput.typed.text = "";
-                            GameData.TextInput.CDFrames = 10f;
-                            GameData.TextInput.InputBox.SetActive(false);
-                            GameData.PlayerTyping = false;
+                        case "forge":
+                            QoLCommands.DoForge();
                             return false;
-                        }
-                    
-                    }
-                    inputLengthCheck = GameData.TextInput.typed.text.Length >= 8;
-                    if ((inputLengthCheck) && (auctionEnabled) && (!GameData.GM.DemoBuild))
-                    {
-                        string text = GameData.TextInput.typed.text.Substring(0, 8);
-                        text = text.ToLower();
-                        bool auction = text == "/auction";
-                        if (auction)
-                        {
-                            ErenshorQoL.ErenshorQoLMod.QoLCommands.DoAuction();
-                            GameData.TextInput.typed.text = "";
-                            GameData.TextInput.CDFrames = 10f;
-                            GameData.TextInput.InputBox.SetActive(false);
-                            GameData.PlayerTyping = false;
+                        case "auction":
+                            QoLCommands.DoAuction();
                             return false;
-                        }
-                    }
-                    inputLengthCheck = GameData.TextInput.typed.text.Length >= 10;
-                    if ((inputLengthCheck) && (allSceneEnabled))
-                    {
-                        string text = GameData.TextInput.typed.text.Substring(0, 10);
-                        text = text.ToLower();
-                        bool allScene = text == "/allscenes";
-                        if (allScene)
-                        {
-                            StringBuilder zoneNamesBuilder = new StringBuilder("Stowaway, Tutorial");
-
-                            foreach (ZoneAtlasEntry zoneAtlasEntry in ZoneAtlas.Atlas)
-                            {
-                                zoneNamesBuilder.Append(", " + zoneAtlasEntry.ZoneName);
-                            }
-
-                            string zoneNames = zoneNamesBuilder.ToString();
-                            UpdateSocialLog.LogAdd("Zone Names: " + zoneNames);
-
-                            GameData.TextInput.typed.text = "";
-                            GameData.TextInput.CDFrames = 10f;
-                            GameData.TextInput.InputBox.SetActive(false);
-                            GameData.PlayerTyping = false;
+                        case "allscenes":
+                            QoLCommands.DoAllScenes();
                             return false;
-                        }
-                    }
-
-                    inputLengthCheck = GameData.TextInput.typed.text.Length >= 5;
-                    if ((inputLengthCheck) && (helpGMEnabled))
-                    {
-                        bool helpGM = false;
-                        bool helpMods = false;
-                        bool helpOther = false;
-                        bool helpPlayer = false;
-                        bool help = false;
-
-                        if (GameData.TextInput.typed.text.Length >= 12)
-                        {
-                            string text = GameData.TextInput.typed.text.Substring(0, 12);
-                            text = text.ToLower();
-                            helpPlayer = text == "/help player";
-                        }
-                        else if (GameData.TextInput.typed.text.Length >= 11)
-                        {
-                            string text = GameData.TextInput.typed.text.Substring(0, 11);
-                            text = text.ToLower();
-                            helpOther = text == "/help other";
-                        }
-                        else if (GameData.TextInput.typed.text.Length >= 10)
-                        {
-                            string text = GameData.TextInput.typed.text.Substring(0, 10);
-                            text = text.ToLower();
-                            helpMods = text == "/help mods";
-                        }
-                        else if (GameData.TextInput.typed.text.Length >= 8)
-                        {
-                            string text = GameData.TextInput.typed.text.Substring(0, 8);
-                            text = text.ToLower();
-                            helpGM = text == "/help gm";
-                        }
-                        else if (GameData.TextInput.typed.text.Length >= 5)
-                        {
-                            string text = GameData.TextInput.typed.text.Substring(0, 5);
-                            text = text.ToLower();
-                            help = text == "/help";
-                        }
-
-                        if (helpGM || helpMods || helpOther || helpPlayer || help)
-                        {
-                            if (helpGM)
-                            {
-                                HelpGM();
-                            }
-                            else if (helpMods)
-                            {
-                                HelpMods();
-                            }
-                            else if (helpOther)
-                            {
-                                HelpOther();
-                            }
-                            else if (helpPlayer)
+                        case "help":
+                            if (arg == "player")
                             {
                                 HelpPlayer();
                             }
-                            else if (help)
+                            else if (arg == "other")
+                            {
+                                HelpOther();
+                            }
+                            else if (arg == "mods")
+                            {
+                                HelpMods();
+                            }
+                            else if (arg == "gm")
+                            {
+                                HelpGM();
+                            }
+                            else
                             {
                                 ErenshorQoLLogger.LogDebug("QoLCommands.DoHelp() called");
                                 DoHelp();
                             }
-                            GameData.TextInput.typed.text = "";
-                            GameData.TextInput.CDFrames = 10f;
-                            GameData.TextInput.InputBox.SetActive(false);
-                            GameData.PlayerTyping = false;
                             return false;
-                        }
                     }
                 }
-                return true;
+                return false;
             }
         }
 
