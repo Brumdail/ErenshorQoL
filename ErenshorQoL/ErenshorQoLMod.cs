@@ -28,14 +28,14 @@ namespace ErenshorQoL
     public class ErenshorQoLMod : BaseUnityPlugin
     {
         internal const string ModName = "ErenshorQoLMod";
-        internal const string ModVersion = "2.2.11.0000"; //const so should be manually updated before release
+        internal const string ModVersion = "2.2.12.0000"; //const so should be manually updated before release
         internal const string ModTitle = "Erenshor Quality of Life Mods";
         internal const string ModDescription = "Erenshor Quality of Life Mods";
         internal const string Author = "Brumdail";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
         private static string ConfigFileFullPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
-        public bool appliedConfigChange = false; //used to check for options to change on each launch
+        private FileSystemWatcher? watcher;
         internal static ErenshorQoLMod context = null!;
 
         private readonly Harmony harmony = new Harmony(ModGUID);
@@ -79,7 +79,6 @@ namespace ErenshorQoL
             }
         }
 
-
         private void SetupWatcher()
         {
             FileSystemWatcher watcher = new(Paths.ConfigPath, ConfigFileName);
@@ -99,7 +98,6 @@ namespace ErenshorQoL
                 ErenshorQoLLogger.LogDebug("ReadConfigValues called");
                 Config.Reload();
                 Config.SaveOnConfigSet = true;
-
             }
             catch
             {
@@ -126,6 +124,7 @@ namespace ErenshorQoL
         internal static ConfigEntry<Toggle> AutoPetOnAggro = null!;
         internal static ConfigEntry<Toggle> AutoPetOnAutoAttackToggle = null!;
         internal static ConfigEntry<Toggle> AutoPriceItem = null!;
+        internal static ConfigEntry<int> ConfigCleanup = null!;
 
         internal static bool _configApplied;
 
@@ -289,6 +288,7 @@ namespace ErenshorQoL
             }
             public static void DoBank()
             {
+                ErenshorQoLLogger.LogDebug($"DoBank called. QoLCommandsToggle.Value = {ErenshorQoLMod.QoLCommandsToggle.Value}");
                 if (ErenshorQoLMod.QoLCommandsToggle.Value == Toggle.Off)
                 {
                     return;
@@ -396,7 +396,7 @@ namespace ErenshorQoL
                             return false;
                     }
                 }
-                return false;
+                return true; // Allow original CheckCommands for all other input
             }
         }
 

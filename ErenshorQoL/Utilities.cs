@@ -26,27 +26,27 @@ namespace ErenshorQoL
             ErenshorQoLMod.QoLAuctionKey = ErenshorQoLMod.context.config("2 - QoL Commands", "Auction Key", new KeyboardShortcut(KeyCode.F10), new ConfigDescription("Key(s) used to open the Auction House window. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html", new ErenshorQoLMod.AcceptableShortcuts()));
             ErenshorQoLMod.QoLForgeKey = ErenshorQoLMod.context.config("2 - QoL Commands", "Forge Key", new KeyboardShortcut(KeyCode.F10, KeyCode.LeftShift), new ConfigDescription("Key(s) used to open the Forge window. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html", new ErenshorQoLMod.AcceptableShortcuts()));
             ErenshorQoLMod.AutoPriceItem = ErenshorQoLMod.context.config("6 - Auto Price Item", "Auto Set AH Item Price", ErenshorQoLMod.Toggle.On, "Automatically start with the highest sellable auction house price when adding an item.");
+            ErenshorQoLMod.ConfigCleanup = ErenshorQoLMod.context.config("Utility", "ConfigCleanup", 0, "Tracks cleanup of obsolete config settings and can be ignored.");
 
-            // Config definitions for obsolete settings
-            ConfigDefinition autoLootToggleDefinition = new ConfigDefinition("1 - AutoLoot", "Enable AutoLoot");
-            ConfigDefinition autoLootDistanceDefinition = new ConfigDefinition("1 - AutoLoot", "Auto Loot Distance");
-            ConfigDefinition autoLootMinimumDefinition = new ConfigDefinition("1 - AutoLoot", "Auto Loot Minimum Threshold");
-            ConfigDefinition autoLootDebugDefinition = new ConfigDefinition("1 - AutoLoot", "AutoLoot Debug Messages");
-            ConfigDefinition autoLootToBankToggleDefinition = new ConfigDefinition("1 - AutoLoot", "Enable AutoLooting into the Bank");
-            ConfigDefinition autoAttackToggleDefinition = new ConfigDefinition("3 - Auto Attack", "Enable Auto Attack");
-            ConfigDefinition autoAttackOnSkillToggleDefinition = new ConfigDefinition("3 - Auto Attack", "Auto Attack on Skill Use");
-            ConfigDefinition autoAttackOnAggroDefinition = new ConfigDefinition("3 - Auto Attack", "Auto Target,Attack on Aggro");
-            ConfigDefinition autoPetToggleDefinition = new ConfigDefinition("4 - Auto Pet", "Enable Auto Pet Command");
-            ConfigDefinition autoPetOnSkillToggleDefinition = new ConfigDefinition("4 - Auto Pet", "Auto Pet Command on Skill Use");
-            ConfigDefinition autoPetOnAggroDefinition = new ConfigDefinition("4 - Auto Pet", "Auto Pet Command on Skill Use");
-            ConfigDefinition autoPetOnAutoAttackToggleDefinition = new ConfigDefinition("4 - Auto Pet", "Auto Pet Command on Auto Attack");
-
-
-
-            if (ErenshorQoLMod.context.appliedConfigChange == false)
+            // Cleanup
+            if (ErenshorQoLMod.ConfigCleanup.Value < 1)
             {
+                // Config definitions for obsolete settings
+                ConfigDefinition autoLootToggleDefinition = new ConfigDefinition("1 - AutoLoot", "Enable AutoLoot");
+                ConfigDefinition autoLootDistanceDefinition = new ConfigDefinition("1 - AutoLoot", "Auto Loot Distance");
+                ConfigDefinition autoLootMinimumDefinition = new ConfigDefinition("1 - AutoLoot", "Auto Loot Minimum Threshold");
+                ConfigDefinition autoLootDebugDefinition = new ConfigDefinition("1 - AutoLoot", "AutoLoot Debug Messages");
+                ConfigDefinition autoLootToBankToggleDefinition = new ConfigDefinition("1 - AutoLoot", "Enable AutoLooting into the Bank");
+                ConfigDefinition autoAttackToggleDefinition = new ConfigDefinition("3 - Auto Attack", "Enable Auto Attack");
+                ConfigDefinition autoAttackOnSkillToggleDefinition = new ConfigDefinition("3 - Auto Attack", "Auto Attack on Skill Use");
+                ConfigDefinition autoAttackOnAggroDefinition = new ConfigDefinition("3 - Auto Attack", "Auto Target,Attack on Aggro");
+                ConfigDefinition autoPetToggleDefinition = new ConfigDefinition("4 - Auto Pet", "Enable Auto Pet Command");
+                ConfigDefinition autoPetOnSkillToggleDefinition = new ConfigDefinition("4 - Auto Pet", "Auto Pet Command on Skill Use");
+                ConfigDefinition autoPetOnAggroDefinition = new ConfigDefinition("4 - Auto Pet", "Auto Pet Command on Skill Use");
+                ConfigDefinition autoPetOnAutoAttackToggleDefinition = new ConfigDefinition("4 - Auto Pet", "Auto Pet Command on Auto Attack");
+
                 //Remove obsolete config sections and settings
-                if(ErenshorQoLMod.context.Config.ContainsKey(autoLootToggleDefinition))
+                if (ErenshorQoLMod.context.Config.ContainsKey(autoLootToggleDefinition))
                 {
                     ErenshorQoLMod.context.Config.Remove(autoLootToggleDefinition);
                     ErenshorUtilitiesLogger.LogInfo("Removed obsolete setting: 'Enable AutoLoot'");
@@ -70,7 +70,7 @@ namespace ErenshorQoL
                 {
                     ErenshorQoLMod.context.Config.Remove(autoLootToBankToggleDefinition);
                     ErenshorUtilitiesLogger.LogInfo("Removed obsolete setting: 'Enable AutoLooting into the Bank'");
-                    
+
                 }
                 if (ErenshorQoLMod.context.Config.ContainsKey(autoAttackToggleDefinition))
                 {
@@ -115,8 +115,9 @@ namespace ErenshorQoL
 
                 }
 
-                //ensure the config change isn't repeated every time
-                ErenshorQoLMod.context.appliedConfigChange = true;
+                ErenshorQoLMod.ConfigCleanup.Value = 1;
+                ErenshorQoLMod.context.Config.Save();
+                ErenshorUtilitiesLogger.LogInfo("Erenshor QoL Config cleanup applied.");
             }
         }
     }
