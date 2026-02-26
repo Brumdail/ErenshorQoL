@@ -124,6 +124,7 @@ namespace ErenshorQoL
         internal static ConfigEntry<Toggle> AutoPetOnAggro = null!;
         internal static ConfigEntry<Toggle> AutoPetOnAutoAttackToggle = null!;
         internal static ConfigEntry<Toggle> AutoPriceItem = null!;
+        internal static ConfigEntry<Toggle> GuildInviteCommandToggle = null!;
         internal static ConfigEntry<int> ConfigCleanup = null!;
 
         internal static bool _configApplied;
@@ -173,6 +174,10 @@ namespace ErenshorQoL
                 UpdateSocialLog.LogAdd("/forge - Opens the forge (blacksmithing) window", "lightblue");
                 UpdateSocialLog.LogAdd("/auction - Opens the auction hall window", "lightblue");
                 UpdateSocialLog.LogAdd("/allscenes - Lists all scenes", "lightblue");
+                if (ErenshorQoLMod.GuildInviteCommandToggle.Value == Toggle.On)
+                {
+                    UpdateSocialLog.LogAdd("/guildinvite SimName - Invite a SimPlayer to your guild by name (alias: /ginvite)", "lightblue");
+                }
             }
             static void HelpPlayer()
             {
@@ -330,6 +335,52 @@ namespace ErenshorQoL
                     UpdateSocialLog.LogAdd("Remove item from cursor before interacting with the forge.", "yellow");
                 }
             }
+            public static void DoGuildInvite(string targetName)
+            {
+                if (ErenshorQoLMod.GuildInviteCommandToggle.Value == Toggle.Off)
+                {
+                    return;
+                }
+                if (string.IsNullOrEmpty(targetName))
+                {
+                    UpdateSocialLog.LogAdd("Usage: /guildinvite SimPlayerName", "yellow");
+                    return;
+                }
+                if (string.IsNullOrEmpty(GameData.PlayerControl.MyGuild))
+                {
+                    UpdateSocialLog.LogAdd("You're not currently in a guild.", "yellow");
+                    return;
+                }
+                LiveGuildData guildData = GameData.GuildManager.GetGuildDataByID(GameData.PlayerControl.MyGuild);
+                if (guildData == null)
+                {
+                    UpdateSocialLog.LogAdd("Could not find your guild data.", "yellow");
+                    return;
+                }
+                if (!guildData.PlayerIsGuildLeader)
+                {
+                    UpdateSocialLog.LogAdd("You must be a guild leader to invite players.", "yellow");
+                    return;
+                }
+                // Find SimPlayer by name (case-insensitive)
+                SimPlayerTracking? foundSim = null;
+                foreach (SimPlayerTracking sim in GameData.SimMngr.Sims)
+                {
+                    if (sim.SimName.Equals(targetName, System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        foundSim = sim;
+                        break;
+                    }
+                }
+                if (foundSim == null)
+                {
+                    UpdateSocialLog.LogAdd("Could not find a player named '" + targetName + "'.", "yellow");
+                    return;
+                }
+                UpdateSocialLog.LogAdd("Guild invite sent to " + foundSim.SimName + "...", "yellow");
+                GameData.PlayerAud.PlayOneShot(GameData.Misc.Click, GameData.SFXVol);
+                GameData.GuildManager.SendSimPlayerGuildInvite(foundSim, guildData);
+            }
             public static void DoAllScenes()
             {
                 if (ErenshorQoLMod.QoLCommandsToggle.Value == Toggle.Off)
@@ -370,6 +421,12 @@ namespace ErenshorQoL
                             return false;
                         case "allscenes":
                             QoLCommands.DoAllScenes();
+                            return false;
+                        case "guildinvite":
+                        case "ginvite":
+                            // Get raw name from input (preserve original case for display)
+                            string rawName = spl.Length > 1 ? txt.Substring(txt.IndexOf(' ') + 1).Trim() : string.Empty;
+                            QoLCommands.DoGuildInvite(rawName);
                             return false;
                         case "help":
                             if (arg == "player")
