@@ -1,9 +1,9 @@
 # ErenshorQoL
 Erenshor Quality of Life Modpack based on BepInEx
 
-## Version: 2.2.12
+## Version: 2.2.26
 
-## Features (Configurable): /auction, /bank, /forge, /help, AutoSendPet, EnableAutoAttack, AutoPriceYourItem
+## Features (Configurable): /auction, /bank, /forge, /guildinvite Scrubby, /help, AutoSendPet, EnableAutoAttack, AutoPriceYourItem
 
 ## Latest Changes:
 Refactored chat command parsing to correct bug causing chat lines to disappear. Re-tested with 0.3 game version and verified all features working as intended.
@@ -13,6 +13,7 @@ Refactored chat command parsing to correct bug causing chat lines to disappear. 
 - `/auction` - Opens the auction hall window (Beta/full version only)
 - `/bank` - Opens the bank window
 - `/forge` - Opens the forge (blacksmithing) window
+- `/guildinvite <name>` invites SimPlayer when player is guild leader or use `/ginvite` for short version.
 - `/help` - Expanded list of commands including additional available player and GM commands
 - `Auto Send Pet` - If enabled, the pet will automatically be sent on triggers (Using certain skills, auto-attacking, or on aggro of hostile enemies)
 - `Auto Enable Autoattack` - If enabled, AutoAttack will be turned on automatically on triggers (Using certain skills, auto-attacking, or on aggro of hostile enemies)
@@ -44,6 +45,7 @@ Adds Postfix commands to `AuctionHouseUI.OpenListItem` to automatically add an i
 - `/auction` - Opens the auction hall window
 - `/bank` - Opens the bank window.
 - `/forge` - Opens the forge (blacksmithing) window
+- `/guildinvite <name>` invites SimPlayer when player is guild leader or use `/ginvite` for short version.
 - `/allscenes` - Lists all scenes.
 - `/help now allows for /help mods, /help gm, /help player, or /help other` for the full breakdown of available commands within the build;
 
@@ -141,6 +143,7 @@ Adds Postfix commands to `AuctionHouseUI.OpenListItem` to automatically add an i
 - `/bkquest` - Load Back Quest Achievements.
 
 ### Changelog:
+- 2026-02-26 - Added /guildinvite command from community submission. Thanks to @aepod for the contribution!
 - 2026-02-12 - Refactored chat command parsing to correct bug causing chat lines to disappear. Re-tested with 0.3 game version and verified all features working as intended.
 - 2025-10-13 - Cleaned up deprecated code and verified with Halloween Event. Added Configurable KeyBinds for Bank, Auction, and Forge commands.
 - 2025-09-25 - Updated with 0.2 game version fixes. Removed AutoLoot feature (broken and superseded by ET508's LootManager). Fixed /help to open the new Help menu and also added the list of the new debug commands in the latest build.
@@ -158,6 +161,7 @@ Adds Postfix commands to `AuctionHouseUI.OpenListItem` to automatically add an i
 `DISCORD:` Brumdail
 
 Special thanks to Mod config code from https://github.com/AzumattDev
+Thanks Aepod for the /guildinvite command contribution! https://github.com/aepod
 
 For Questions or Comments, find me in the Erenshor Discord:
 
