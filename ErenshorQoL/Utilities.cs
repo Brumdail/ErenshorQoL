@@ -26,6 +26,7 @@ namespace ErenshorQoL
             ErenshorQoLMod.QoLAuctionKey = ErenshorQoLMod.context.config("2 - QoL Commands", "Auction Key", new KeyboardShortcut(KeyCode.F10), new ConfigDescription("Key(s) used to open the Auction House window. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html", new ErenshorQoLMod.AcceptableShortcuts()));
             ErenshorQoLMod.QoLForgeKey = ErenshorQoLMod.context.config("2 - QoL Commands", "Forge Key", new KeyboardShortcut(KeyCode.F10, KeyCode.LeftShift), new ConfigDescription("Key(s) used to open the Forge window. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html", new ErenshorQoLMod.AcceptableShortcuts()));
             ErenshorQoLMod.AutoPriceItem = ErenshorQoLMod.context.config("6 - Auto Price Item", "Auto Set AH Item Price", ErenshorQoLMod.Toggle.On, "Automatically start with the highest sellable auction house price when adding an item.");
+            ErenshorQoLMod.GuildInviteCommandToggle = ErenshorQoLMod.context.config("2 - QoL Commands", "Enable Guild Invite Command", ErenshorQoLMod.Toggle.On, "Enable /guildinvite and /ginvite commands to invite SimPlayers to your guild by name.");
             ErenshorQoLMod.ConfigCleanup = ErenshorQoLMod.context.config("Utility", "ConfigCleanup", 0, "Tracks cleanup of obsolete config settings and can be ignored.");
 
             // Cleanup
